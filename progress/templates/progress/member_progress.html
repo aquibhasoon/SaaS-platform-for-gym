@@ -1,0 +1,1858 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ member.full_name }} - Progress
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .progress-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .member-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .member-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .member-heading h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .member-meta {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        border-radius: 9px;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        transition: .15s ease;
+    }
+
+    .btn-primary {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #4338ca;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .summary-value {
+        margin-top: 9px;
+        color: #111827;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    
+.filter-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 24px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.filter-title {
+    margin: 0;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-items: end;
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.filter-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 11px;
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+    font: inherit;
+    color: #334155;
+    background: white;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.bmi-status {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.chart-card.wide {
+    grid-column: 1 / -1;
+}
+
+.danger-btn {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.danger-btn:hover {
+    background: #fee2e2;
+}
+
+.summary-subtitle {
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .change-positive,
+    .change-negative,
+    .change-neutral {
+        margin-top: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .change-positive {
+        color: #059669;
+    }
+
+    .change-negative {
+        color: #dc2626;
+    }
+
+    .change-neutral {
+        color: #64748b;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .chart-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .chart-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .chart-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .chart-header p {
+        margin: 5px 0 0;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .chart-container {
+        height: 280px;
+        position: relative;
+    }
+
+    .comparison-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        margin: 0;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .section-subtitle {
+        margin: 5px 0 20px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+
+    .comparison-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .comparison-item-name {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .comparison-values {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .comparison-value {
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .comparison-label {
+        display: block;
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .comparison-arrow {
+        color: #94a3b8;
+        font-size: 15px;
+    }
+
+    .history-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .history-header {
+        padding: 20px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .history-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .history-header p {
+        margin: 5px 0 0;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .history-table-wrap {
+        overflow-x: auto;
+    }
+
+    .history-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+    }
+
+    .history-table th {
+        padding: 13px 17px;
+        background: #f8fafc;
+        color: #64748b;
+        text-align: left;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .history-table td {
+        padding: 15px 17px;
+        border-top: 1px solid #eef2f7;
+        color: #334155;
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+    .history-date {
+        color: #111827;
+        font-weight: 800;
+    }
+
+    .notes {
+        max-width: 260px;
+        color: #64748b;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .empty-state {
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 60px 25px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .empty-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .empty-state h2 {
+        margin: 0;
+        color: #334155;
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        margin: 8px 0 20px;
+        font-size: 13px;
+    }
+
+
+@media (max-width: 800px) {
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        width: 100%;
+    }
+
+    .filter-actions .btn {
+        flex: 1;
+    }
+}
+
+    @media (max-width: 1000px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-card.full-width {
+            grid-column: auto;
+        }
+
+        .comparison-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 650px) {
+
+        .progress-header {
+            flex-direction: column;
+        }
+
+        .member-heading h1 {
+            font-size: 23px;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .header-actions .btn {
+            flex: 1;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .comparison-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-container {
+            height: 240px;
+        }
+
+    }
+</style>
+
+
+<div class="progress-page">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="progress-header">
+
+        <div class="member-heading">
+
+            <div class="member-avatar">
+                {{ member.first_name|first|upper }}
+            </div>
+
+            <div>
+
+                <h1>
+                    {{ member.full_name }}
+                </h1>
+
+                <div class="member-meta">
+
+                    {{ member.member_id }}
+
+                    {% if member.phone %}
+                    · {{ member.phone }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="{% url 'progress:list' %}" class="btn btn-secondary">
+
+                ← Back
+
+            </a>
+
+
+            {% if can_manage_progress %}
+
+            <a href="{% url 'progress:create' %}?member={{ member.id }}" class="btn btn-primary">
+
+                + Add Measurement
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTORY / CHART FILTER
+         ================================================= -->
+    <form method="get" class="filter-card">
+        <div class="filter-header">
+            <h2 class="filter-title">📅 Filter Progress History</h2>
+            {% if from_date or to_date %}
+            <span class="summary-subtitle">
+                Showing {{ filtered_record_count }} of {{ record_count }} records
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="filter-grid">
+            <div class="filter-field">
+                <label for="from-date">From</label>
+                <input id="from-date" type="date" name="from_date" value="{{ from_date }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="to-date">To</label>
+                <input id="to-date" type="date" name="to_date" value="{{ to_date }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+                <a href="{% url 'progress:member_progress' member.id %}" class="btn btn-secondary">Clear</a>
+            </div>
+        </div>
+    </form>
+
+    {% if latest %}
+
+
+    <!-- =================================================
+             SUMMARY CARDS
+             ================================================= -->
+
+    <div class="summary-grid">
+
+
+        <!-- Weight -->
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Current Weight
+            </div>
+
+            <div class="summary-value">
+
+                {% if latest.weight %}
+                {{ latest.weight }} kg
+                {% else %}
+                —
+                {% endif %}
+
+            </div>
+
+
+            {% if weight_change is not None %}
+
+            <div
+                class="{% if weight_change < 0 %}change-positive{% elif weight_change > 0 %}change-negative{% else %}change-neutral{% endif %}">
+
+                {% if weight_change > 0 %}
+                +{{ weight_change }} kg
+                {% elif weight_change < 0 %} {{ weight_change }} kg {% else %} No change {% endif %} since first record
+                    </div>
+
+                    {% else %}
+
+                    <div class="summary-subtitle">
+                        Latest measurement
+                    </div>
+
+                    {% endif %}
+
+            </div>
+
+
+            <!-- Body Fat -->
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Body Fat
+                </div>
+
+                <div class="summary-value">
+
+                    {% if latest.body_fat %}
+                    {{ latest.body_fat }}%
+                    {% else %}
+                    —
+                    {% endif %}
+
+                </div>
+
+
+                {% if body_fat_change is not None %}
+
+                <div
+                    class="{% if body_fat_change < 0 %}change-positive{% elif body_fat_change > 0 %}change-negative{% else %}change-neutral{% endif %}">
+
+                    {% if body_fat_change > 0 %}
+                    +{{ body_fat_change }}%
+                    {% elif body_fat_change < 0 %} {{ body_fat_change }}% {% else %} No change {% endif %} since first
+                        record </div>
+
+                        {% else %}
+
+                        <div class="summary-subtitle">
+                            Latest measurement
+                        </div>
+
+                        {% endif %}
+
+                </div>
+
+
+                <!-- Waist -->
+
+                <div class="summary-card">
+
+                    <div class="summary-label">
+                        Waist
+                    </div>
+
+                    <div class="summary-value">
+
+                        {% if latest.waist %}
+                        {{ latest.waist }} cm
+                        {% else %}
+                        —
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if waist_change is not None %}
+
+                    <div
+                        class="{% if waist_change < 0 %}change-positive{% elif waist_change > 0 %}change-negative{% else %}change-neutral{% endif %}">
+
+                        {% if waist_change > 0 %}
+                        +{{ waist_change }} cm
+                        {% elif waist_change < 0 %} {{ waist_change }} cm {% else %} No change {% endif %} since first
+                            record </div>
+
+                            {% else %}
+
+                            <div class="summary-subtitle">
+                                Latest measurement
+                            </div>
+
+                            {% endif %}
+
+                    </div>
+
+
+                    <!-- Records -->
+
+                    <div class="summary-card">
+
+                        <div class="summary-label">
+                            Measurements
+                        </div>
+
+                        <div class="summary-value">
+                            {{ record_count }}
+                        </div>
+
+                        <div class="summary-subtitle">
+
+                            {% if latest %}
+                            Last recorded
+                            {{ latest.measurement_date|date:"d M Y" }}
+                            {% else %}
+                            No measurements
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="summary-card">
+                    <div class="summary-label">BMI</div>
+                    <div class="summary-value">
+                        {% if bmi %}{{ bmi }}{% else %}—{% endif %}
+                    </div>
+                    {% if bmi_status %}
+                    <div class="bmi-status">{{ bmi_status }}</div>
+                    {% else %}
+                    <div class="summary-subtitle">Requires current height + weight</div>
+                    {% endif %}
+                </div>
+
+
+                <!-- =================================================
+             CHARTS
+             ================================================= -->
+
+                <div class="charts-grid">
+
+
+                    <!-- Weight Chart -->
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <h2>
+                                    Weight Progress
+                                </h2>
+
+                                <p>
+                                    Weight change over time
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas id="weightChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Body Fat Chart -->
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <h2>
+                                    Body Fat Progress
+                                </h2>
+
+                                <p>
+                                    Body fat percentage over time
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas id="bodyFatChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Waist Chart -->
+
+                    <div class="chart-card full-width">
+
+                        <div class="chart-header">
+
+                            <div>
+
+                                <h2>
+                                    Waist Progress
+                                </h2>
+
+                                <p>
+                                    Waist measurement over time
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas id="waistChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+
+
+   </div>
+
+   <div class="charts-grid" style="margin-top:16px;">
+       <div class="chart-card">
+           <div class="chart-header">
+               <div>
+                   <h2>Upper Body Measurements</h2>
+                   <p>Chest, hip and arm measurements over time</p>
+               </div>
+           </div>
+           <div class="chart-container">
+               <canvas id="upperBodyChart"></canvas>
+           </div>
+       </div>
+
+       <div class="chart-card">
+           <div class="chart-header">
+               <div>
+                   <h2>Leg Measurements</h2>
+                   <p>Left and right thigh measurements over time</p>
+               </div>
+           </div>
+           <div class="chart-container">
+               <canvas id="lowerBodyChart"></canvas>
+           </div>
+       </div>
+   </div>
+
+
+   <!-- =================================================
+FIRST VS LATEST
+             ================================================= -->
+
+                {% if first and latest %}
+
+                <div class="comparison-card">
+
+                    <h2 class="section-title">
+                        First vs Latest
+                    </h2>
+
+                    <p class="section-subtitle">
+                        Compare the member's starting measurements with the latest record.
+                    </p>
+
+
+                    <div class="comparison-grid">
+
+
+                        <!-- Weight -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Weight
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.weight %}
+                                        {{ first.weight }} kg
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.weight %}
+                                        {{ latest.weight }} kg
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Body Fat -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Body Fat
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.body_fat %}
+                                        {{ first.body_fat }}%
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.body_fat %}
+                                        {{ latest.body_fat }}%
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Waist -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Waist
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.waist %}
+                                        {{ first.waist }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.waist %}
+                                        {{ latest.waist }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Chest -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Chest
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.chest %}
+                                        {{ first.chest }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.chest %}
+                                        {{ latest.chest }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Arms -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Right Arm
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.right_arm %}
+                                        {{ first.right_arm }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.right_arm %}
+                                        {{ latest.right_arm }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Thigh -->
+
+                        <div class="comparison-item">
+
+                            <div class="comparison-item-name">
+                                Right Thigh
+                            </div>
+
+                            <div class="comparison-values">
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if first.right_thigh %}
+                                        {{ first.right_thigh }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        First
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comparison-arrow">
+                                    →
+                                </div>
+
+
+                                <div>
+
+                                    <div class="comparison-value">
+
+                                        {% if latest.right_thigh %}
+                                        {{ latest.right_thigh }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="comparison-label">
+                                        Latest
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+             HISTORY
+             ================================================= -->
+
+                <div class="history-card">
+
+                    <div class="history-header">
+
+                        <h2>
+                            Measurement History
+                        </h2>
+
+                        <p>
+                            Complete history of this member's recorded measurements.
+                        </p>
+
+                    </div>
+
+
+                    {% if records %}
+
+                    <div class="history-table-wrap">
+
+                        <table class="history-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Date</th>
+                                    <th>Weight</th>
+                                    <th>Height</th>
+                                    <th>Body Fat</th>
+                                    <th>Chest</th>
+                                    <th>Waist</th>
+                                    <th>Hip</th>
+                                    <th>Arms</th>
+                                    <th>Thighs</th>
+                                    <th>Notes</th>
+
+                                    {% if can_manage_progress %}
+                                    <th>Actions</th>
+                                    {% endif %}
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for record in records %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="history-date">
+                                            {{ record.measurement_date|date:"d M Y" }}
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.weight %}
+                                        {{ record.weight }} kg
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.height %}
+                                        {{ record.height }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.body_fat %}
+                                        {{ record.body_fat }}%
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.chest %}
+                                        {{ record.chest }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.waist %}
+                                        {{ record.waist }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.hip %}
+                                        {{ record.hip }} cm
+                                        {% else %}
+                                        —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.left_arm or record.right_arm %}
+
+                                        L:
+                                        {{ record.left_arm|default:"—" }}
+
+                                        /
+
+                                        R:
+                                        {{ record.right_arm|default:"—" }}
+
+                                        cm
+
+                                        {% else %}
+
+                                        —
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.left_thigh or record.right_thigh %}
+
+                                        L:
+                                        {{ record.left_thigh|default:"—" }}
+
+                                        /
+
+                                        R:
+                                        {{ record.right_thigh|default:"—" }}
+
+                                        cm
+
+                                        {% else %}
+
+                                        —
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if record.trainer_notes %}
+
+                                        <div class="notes">
+                                            {{ record.trainer_notes }}
+                                        </div>
+
+                                        {% else %}
+
+                                        —
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    {% if can_manage_progress %}
+
+                                    <td>
+
+                                        <div class="table-actions">
+
+                                            <a href="{% url 'progress:edit' record.id %}" class="btn btn-secondary">
+
+                                                Edit
+
+                                            </a>
+                                            <form method="post"
+                                                action="{% url 'progress:delete' record.id %}"
+                                                onsubmit="return confirm('Delete this progress record permanently?');"
+                                                style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn danger-btn">Delete</button>
+                                            </form>
+
+                                        </div>
+
+                                    </td>
+
+                                    {% endif %}
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            📈
+                        </div>
+
+                        <h2>
+                            No measurements yet
+                        </h2>
+
+                        <p>
+                            Start recording this member's progress to see their fitness journey here.
+                        </p>
+
+
+                        {% if can_manage_progress %}
+
+                        <a href="{% url 'progress:create' %}?member={{ member.id }}" class="btn btn-primary">
+
+                            + Add First Measurement
+
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% else %}
+
+
+                <!-- =================================================
+             NO PROGRESS
+             ================================================= -->
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📊
+                    </div>
+
+                    <h2>
+                        No progress recorded yet
+                    </h2>
+
+                    <p>
+                        Start tracking {{ member.full_name }}'s body measurements and fitness progress.
+                    </p>
+
+
+                    {% if can_manage_progress %}
+
+                    <a href="{% url 'progress:create' %}?member={{ member.id }}" class="btn btn-primary">
+
+                        + Add First Measurement
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+            {% if records %}
+
+            {{ chart_labels|json_script:"chart-labels-data" }}
+            {{ weight_data|json_script:"weight-data" }}
+            {{ body_fat_data|json_script:"body-fat-data" }}
+            {{ waist_data|json_script:"waist-data" }}
+            {{ chest_data|json_script:"chest-data" }}
+            {{ hip_data|json_script:"hip-data" }}
+            {{ left_arm_data|json_script:"left-arm-data" }}
+            {{ right_arm_data|json_script:"right-arm-data" }}
+            {{ left_thigh_data|json_script:"left-thigh-data" }}
+            {{ right_thigh_data|json_script:"right-thigh-data" }}
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <script>
+
+                const chartLabels = JSON.parse(
+                    document.getElementById("chart-labels-data").textContent
+                );
+
+                const weightData = JSON.parse(
+                    document.getElementById("weight-data").textContent
+                );
+
+                const bodyFatData = JSON.parse(
+                    document.getElementById("body-fat-data").textContent
+                );
+
+                const waistData = JSON.parse(
+                    document.getElementById("waist-data").textContent
+                );
+                const chestData = JSON.parse(
+                    document.getElementById("chest-data").textContent
+                );
+                const hipData = JSON.parse(
+                    document.getElementById("hip-data").textContent
+                );
+                const leftArmData = JSON.parse(
+                    document.getElementById("left-arm-data").textContent
+                );
+                const rightArmData = JSON.parse(
+                    document.getElementById("right-arm-data").textContent
+                );
+                const leftThighData = JSON.parse(
+                    document.getElementById("left-thigh-data").textContent
+                );
+                const rightThighData = JSON.parse(
+                    document.getElementById("right-thigh-data").textContent
+                );
+
+
+                function createProgressChart(
+                    canvasId,
+                    label,
+                    data,
+                    unit
+                ) {
+
+                    const canvas = document.getElementById(
+                        canvasId
+                    );
+
+                    if (!canvas) {
+                        return;
+                    }
+
+                    new Chart(
+                        canvas,
+                        {
+                            type: "line",
+
+                            data: {
+                                labels: chartLabels,
+
+                                datasets: [
+                                    {
+                                        label: label,
+                                        data: data,
+
+                                        tension: 0.35,
+
+                                        spanGaps: true,
+
+                                        pointRadius: 4,
+
+                                        pointHoverRadius: 6,
+
+                                        borderWidth: 2,
+
+                                        fill: false,
+                                    }
+                                ]
+                            },
+
+                            options: {
+
+                                responsive: true,
+
+                                maintainAspectRatio: false,
+
+                                interaction: {
+                                    intersect: false,
+                                    mode: "index",
+                                },
+
+                                plugins: {
+
+                                    legend: {
+                                        display: false,
+                                    },
+
+                                    tooltip: {
+
+                                        callbacks: {
+
+                                            label: function (
+                                                context
+                                            ) {
+
+                                                const value =
+                                                    context.parsed.y;
+
+                                                if (
+                                                    value === null
+                                                    ||
+                                                    value === undefined
+                                                ) {
+                                                    return "";
+                                                }
+
+                                                return (
+                                                    label
+                                                    + ": "
+                                                    + value
+                                                    + " "
+                                                    + unit
+                                                );
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                },
+
+                                scales: {
+
+                                    y: {
+
+                                        beginAtZero: false,
+
+                                        ticks: {
+
+                                            callback: function (
+                                                value
+                                            ) {
+
+                                                return (
+                                                    value
+                                                    + " "
+                                                    + unit
+                                                );
+
+                                            }
+
+                                        }
+
+                                    },
+
+                                    x: {
+
+                                        ticks: {
+                                            maxRotation: 45,
+                                            minRotation: 0,
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                createProgressChart(
+                    "weightChart",
+                    "Weight",
+                    weightData,
+                    "kg"
+                );
+
+
+                createProgressChart(
+                    "bodyFatChart",
+                    "Body Fat",
+                    bodyFatData,
+                    "%"
+                );
+
+
+
+    createProgressChart(
+        "waistChart",
+        "Waist",
+        waistData,
+        "cm"
+    );
+
+    function createMultiProgressChart(canvasId, datasets) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        new Chart(canvas, {
+            type: "line",
+            data: {
+                labels: chartLabels,
+                datasets: datasets.map(function(item) {
+                    return {
+                        label: item.label,
+                        data: item.data,
+                        tension: 0.35,
+                        spanGaps: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderWidth: 2,
+                        fill: false,
+                    };
+                })
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "top",
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                if (value === null || value === undefined) {
+                                    return "";
+                                }
+                                return context.dataset.label + ": " + value + " cm";
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return value + " cm";
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createMultiProgressChart(
+        "upperBodyChart",
+        [
+            { label: "Chest", data: chestData },
+            { label: "Hip", data: hipData },
+            { label: "Left Arm", data: leftArmData },
+            { label: "Right Arm", data: rightArmData },
+        ]
+    );
+
+    createMultiProgressChart(
+        "lowerBodyChart",
+        [
+            { label: "Left Thigh", data: leftThighData },
+            { label: "Right Thigh", data: rightThighData },
+        ]
+    );
+
+</script>
+
+            {% endif %}
+
+            {% endblock %}

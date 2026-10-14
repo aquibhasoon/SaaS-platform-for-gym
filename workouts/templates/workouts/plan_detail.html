@@ -1,0 +1,1670 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+
+    .plan-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .plan-header {
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: white;
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+
+    .plan-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+    }
+
+    .plan-header p {
+        margin: 0;
+        color: #cbd5e1;
+        line-height: 1.6;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #64748b;
+        text-decoration: none;
+        margin-bottom: 18px;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        color: #111827;
+    }
+
+
+    /* =====================================================
+       SECTION
+       ===================================================== */
+
+    .plan-section {
+        margin-bottom: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: 22px;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    .section-subtitle {
+        margin: 4px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       EXERCISE LIST
+       ===================================================== */
+
+    .exercise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .exercise-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 22px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .exercise-main {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .exercise-number {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #475569;
+        flex-shrink: 0;
+    }
+
+    .exercise-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 5px;
+    }
+
+    .exercise-category {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .exercise-stats {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .stat {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+    }
+
+    .stat-value {
+        font-size: 15px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .exercise-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        justify-content: flex-end;
+    }
+
+
+    /* =====================================================
+       EMPTY
+       ===================================================== */
+
+    .empty-state {
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 50px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .empty-state h3 {
+        margin-top: 0;
+        color: #334155;
+    }
+
+
+    /* =====================================================
+       ADD EXERCISE
+       ===================================================== */
+
+    .management-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .management-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .management-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 21px;
+    }
+
+    .management-header p {
+        margin: 5px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .management-body {
+        padding: 24px;
+        background: #f8fafc;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #dbe1e8;
+        border-radius: 9px;
+        background: white;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #64748b;
+        box-shadow: 0 0 0 3px rgba(100,116,139,.12);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .btn {
+        border: none;
+        border-radius: 9px;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        transition: .15s ease;
+    }
+
+    .btn-primary {
+        background: #111827;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1f2937;
+        transform: translateY(-1px);
+    }
+
+    .btn-edit {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-edit:hover {
+        background: #e2e8f0;
+    }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .btn-delete:hover {
+        background: #fee2e2;
+    }
+
+    .form-actions {
+        margin-top: 18px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+
+    /* =====================================================
+       EDIT MODAL
+       ===================================================== */
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, .60);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-box {
+        width: 100%;
+        max-width: 650px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 25px 60px rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #111827;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .modal-footer {
+        padding: 18px 24px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+
+
+    /* =====================================================
+       MEMBER WORKOUT ASSIGNMENTS
+       ===================================================== */
+
+    .assignment-section {
+        margin-top: 24px;
+    }
+
+    .assignment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .assignment-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .assignment-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .member-name {
+        font-size: 17px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .member-meta {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+
+    .status-active {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-completed {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-cancelled {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .assignment-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .assignment-detail {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        padding: 10px 12px;
+    }
+
+    .assignment-detail-label {
+        display: block;
+        font-size: 10px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .assignment-detail-value {
+        font-size: 13px;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .assignment-notes {
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 12px 0 0;
+        white-space: pre-line;
+    }
+
+    .assignment-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 14px;
+        margin-top: 14px;
+    }
+
+    .assigned-by {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .assign-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .assign-form-grid .full {
+        grid-column: 1 / -1;
+    }
+
+    .btn-cancel-assignment {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .btn-cancel-assignment:hover {
+        background: #fee2e2;
+    }
+
+    .assignment-empty {
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 35px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+        .assignment-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .assignment-grid,
+        .assignment-details,
+        .assign-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .assign-form-grid .full {
+            grid-column: auto;
+        }
+
+        .assignment-card-header,
+        .assignment-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 900px) {
+
+        .form-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .exercise-card {
+            align-items: flex-start;
+        }
+
+        .exercise-stats {
+            justify-content: flex-start;
+        }
+    }
+
+
+    @media (max-width: 700px) {
+
+        .plan-header {
+            padding: 24px;
+        }
+
+        .plan-header h1 {
+            font-size: 25px;
+        }
+
+        .exercise-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .exercise-stats {
+            justify-content: flex-start;
+        }
+
+        .exercise-actions {
+            justify-content: flex-start;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+    }
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="plan-page">
+
+
+    <!-- =====================================================
+         BACK
+         ===================================================== -->
+
+    <a href="{% url 'workouts:list' %}" class="back-link">
+        ← Back to Workouts
+    </a>
+
+
+    <!-- =====================================================
+         PLAN HEADER
+         ===================================================== -->
+
+    <div class="plan-header">
+
+        <h1>{{ plan.name }}</h1>
+
+        {% if plan.description %}
+            <p>{{ plan.description }}</p>
+        {% else %}
+            <p>Workout plan and exercise routine.</p>
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PLAN EXERCISES
+         ===================================================== -->
+
+    <div class="plan-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title">
+                    Exercises
+                </h2>
+
+                <p class="section-subtitle">
+                    Exercises currently included in this workout plan.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="exercise-list">
+
+
+            {% for item in plan_exercises %}
+
+                <div class="exercise-card">
+
+
+                    <div style="flex:1; min-width:0;">
+
+                        <div class="exercise-main">
+
+                            <div class="exercise-number">
+                                {{ forloop.counter }}
+                            </div>
+
+                            <div>
+
+                                <div class="exercise-name">
+                                    {{ item.exercise.name }}
+                                </div>
+
+                                <div class="exercise-category">
+                                    {{ item.exercise.get_category_display }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if can_manage_workouts %}
+
+                            <div class="exercise-actions">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-edit"
+                                    onclick="openEditModal('{{ item.id }}')">
+
+                                    ✏️ Edit
+
+                                </button>
+
+
+                                <form
+                                    method="post"
+                                    style="display:inline;"
+                                    onsubmit="return confirm('Remove this exercise from the plan?');">
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="delete_exercise">
+
+                                    <input
+                                        type="hidden"
+                                        name="item_id"
+                                        value="{{ item.id }}">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-delete">
+
+                                        🗑 Remove
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         STATS
+                         ================================================= -->
+
+                    <div class="exercise-stats">
+
+
+                        {% if item.sets %}
+
+                            <div class="stat">
+
+                                <span class="stat-label">
+                                    Sets
+                                </span>
+
+                                <span class="stat-value">
+                                    {{ item.sets }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if item.reps %}
+
+                            <div class="stat">
+
+                                <span class="stat-label">
+                                    Reps
+                                </span>
+
+                                <span class="stat-value">
+                                    {{ item.reps }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if item.target_weight %}
+
+                            <div class="stat">
+
+                                <span class="stat-label">
+                                    Weight
+                                </span>
+
+                                <span class="stat-value">
+                                    {{ item.target_weight }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if item.duration_minutes %}
+
+                            <div class="stat">
+
+                                <span class="stat-label">
+                                    Duration
+                                </span>
+
+                                <span class="stat-value">
+                                    {{ item.duration_minutes }} min
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if item.rest_seconds %}
+
+                            <div class="stat">
+
+                                <span class="stat-label">
+                                    Rest
+                                </span>
+
+                                <span class="stat-value">
+                                    {{ item.rest_seconds }} sec
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+                </div>
+
+
+            {% empty %}
+
+                <div class="empty-state">
+
+                    <h3>
+                        No exercises in this plan
+                    </h3>
+
+                    <p>
+                        Add exercises below to build this workout.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ADD EXERCISE
+         ===================================================== -->
+
+    {% if can_manage_workouts %}
+
+        <div class="plan-section">
+
+            <div class="management-card">
+
+                <div class="management-header">
+
+                    <h2>
+                        Add Exercise
+                    </h2>
+
+                    <p>
+                        Add an exercise from your exercise library
+                        to this workout plan.
+                    </p>
+
+                </div>
+
+
+                <div class="management-body">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="add_exercise">
+
+
+                        <div class="form-grid">
+
+
+                            <!-- EXERCISE -->
+
+                            <div class="form-group full">
+
+                                <label>
+                                    Exercise
+                                </label>
+
+                                <select
+                                    name="exercise"
+                                    class="form-control"
+                                    required>
+
+                                    <option value="">
+                                        Select an exercise
+                                    </option>
+
+                                    {% for exercise in all_exercises %}
+
+                                        <option value="{{ exercise.id }}">
+
+                                            {{ exercise.name }}
+                                            —
+                                            {{ exercise.get_category_display }}
+
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- ORDER -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Order
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="order"
+                                    class="form-control"
+                                    min="1"
+                                    value="1">
+
+                            </div>
+
+
+                            <!-- SETS -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Sets
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="sets"
+                                    class="form-control"
+                                    min="1"
+                                    placeholder="3">
+
+                            </div>
+
+
+                            <!-- REPS -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Reps
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="reps"
+                                    class="form-control"
+                                    placeholder="8-12">
+
+                            </div>
+
+
+                            <!-- WEIGHT -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Target Weight
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="target_weight"
+                                    class="form-control"
+                                    placeholder="40 kg">
+
+                            </div>
+
+
+                            <!-- DURATION -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Duration (minutes)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="duration_minutes"
+                                    class="form-control"
+                                    min="1"
+                                    placeholder="20">
+
+                            </div>
+
+
+                            <!-- REST -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Rest (seconds)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="rest_seconds"
+                                    class="form-control"
+                                    min="0"
+                                    placeholder="90">
+
+                            </div>
+
+
+                            <!-- NOTES -->
+
+                            <div class="form-group full">
+
+                                <label>
+                                    Trainer Notes
+                                </label>
+
+                                <textarea
+                                    name="trainer_notes"
+                                    class="form-control"
+                                    rows="3"
+                                    placeholder="Special instructions for this exercise..."></textarea>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                + Add Exercise
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <!-- =====================================================
+         ASSIGN WORKOUT TO MEMBERS
+         ===================================================== -->
+
+    {% if can_manage_workouts %}
+
+        <div class="plan-section assignment-section">
+
+            <div class="management-card">
+
+                <div class="management-header">
+                    <h2>Assign Workout</h2>
+                    <p>Assign this workout plan to an active member.</p>
+                </div>
+
+                <div class="management-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="assign_workout">
+
+                        <div class="assign-form-grid">
+
+                            <div class="form-group">
+                                <label for="{{ assign_form.member.id_for_label }}">
+                                    Member
+                                </label>
+
+                                {{ assign_form.member }}
+
+                                {% if assign_form.member.errors %}
+                                    <div style="color:#dc2626;font-size:12px;">
+                                        {{ assign_form.member.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ assign_form.start_date.id_for_label }}">
+                                    Start Date
+                                </label>
+
+                                {{ assign_form.start_date }}
+
+                                {% if assign_form.start_date.errors %}
+                                    <div style="color:#dc2626;font-size:12px;">
+                                        {{ assign_form.start_date.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ assign_form.end_date.id_for_label }}">
+                                    End Date
+                                </label>
+
+                                {{ assign_form.end_date }}
+
+                                <small style="color:#94a3b8;">
+                                    Optional
+                                </small>
+
+                                {% if assign_form.end_date.errors %}
+                                    <div style="color:#dc2626;font-size:12px;">
+                                        {{ assign_form.end_date.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="{{ assign_form.trainer_notes.id_for_label }}">
+                                    Trainer Notes
+                                </label>
+
+                                {{ assign_form.trainer_notes }}
+
+                                {% if assign_form.trainer_notes.errors %}
+                                    <div style="color:#dc2626;font-size:12px;">
+                                        {{ assign_form.trainer_notes.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        {% if assign_form.non_field_errors %}
+                            <div style="color:#dc2626;font-size:12px;margin-top:12px;">
+                                {{ assign_form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                + Assign Workout
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MEMBER ASSIGNMENTS
+         ===================================================== -->
+
+    <div class="plan-section assignment-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2 class="section-title">
+                    Member Assignments
+                </h2>
+
+                <p class="section-subtitle">
+                    Members who have been assigned this workout plan.
+                </p>
+            </div>
+
+        </div>
+
+        {% if assignments %}
+
+            <div class="assignment-grid">
+
+                {% for assignment in assignments %}
+
+                    <div class="assignment-card">
+
+                        <div class="assignment-card-header">
+
+                            <div>
+                                <div class="member-name">
+                                    {{ assignment.member.full_name }}
+                                </div>
+
+                                <div class="member-meta">
+                                    {{ assignment.member.member_id }}
+
+                                    {% if assignment.member.phone %}
+                                        · {{ assignment.member.phone }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <span class="status-badge status-{{ assignment.status }}">
+                                {{ assignment.get_status_display }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="assignment-details">
+
+                            <div class="assignment-detail">
+                                <span class="assignment-detail-label">
+                                    Start Date
+                                </span>
+
+                                <span class="assignment-detail-value">
+                                    {{ assignment.start_date|date:"d M Y" }}
+                                </span>
+                            </div>
+
+
+                            <div class="assignment-detail">
+                                <span class="assignment-detail-label">
+                                    End Date
+                                </span>
+
+                                <span class="assignment-detail-value">
+
+                                    {% if assignment.end_date %}
+                                        {{ assignment.end_date|date:"d M Y" }}
+                                    {% else %}
+                                        No end date
+                                    {% endif %}
+
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        {% if assignment.trainer_notes %}
+
+                            <p class="assignment-notes">
+                                {{ assignment.trainer_notes }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <div class="assignment-footer">
+
+                            <span class="assigned-by">
+
+                                Assigned
+
+                                {% if assignment.assigned_by %}
+                                    by {{ assignment.assigned_by.get_full_name|default:assignment.assigned_by.username }}
+                                {% else %}
+                                    by system
+                                {% endif %}
+
+                                · {{ assignment.created_at|date:"d M Y" }}
+
+                            </span>
+
+
+                            {% if can_manage_workouts and assignment.status == "active" %}
+
+                                <form
+                                    method="post"
+                                    style="display:inline;"
+                                    onsubmit="return confirm('Cancel this workout assignment?');">
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="cancel_assignment">
+
+                                    <input
+                                        type="hidden"
+                                        name="assignment_id"
+                                        value="{{ assignment.id }}">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-cancel-assignment">
+
+                                        Cancel Assignment
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="assignment-empty">
+
+                <h3 style="margin-top:0;color:#334155;">
+                    No members assigned
+                </h3>
+
+                <p style="margin-bottom:0;">
+                    Use the Assign Workout section above to assign this plan to a member.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+</div>
+
+
+
+</div>
+
+
+
+<!-- =========================================================
+     EDIT MODALS
+     ========================================================= -->
+
+{% for item in plan_exercises %}
+
+    <div
+        id="editModal{{ item.id }}"
+        class="modal-overlay"
+        onclick="closeOutside(event, 'editModal{{ item.id }}')">
+
+
+        <div
+            class="modal-box"
+            onclick="event.stopPropagation();">
+
+
+            <div class="modal-header">
+
+                <h2>
+                    Edit Exercise
+                </h2>
+
+                <button
+                    type="button"
+                    class="btn btn-edit"
+                    onclick="closeEditModal('{{ item.id }}')">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="edit_exercise">
+
+                <input
+                    type="hidden"
+                    name="item_id"
+                    value="{{ item.id }}">
+
+
+                <div class="modal-body">
+
+                    <div class="modal-grid">
+
+
+                        <!-- EXERCISE -->
+
+                        <div
+                            class="form-group"
+                            style="grid-column:1/-1;">
+
+                            <label>
+                                Exercise
+                            </label>
+
+                            <select
+                                name="exercise"
+                                class="form-control"
+                                required>
+
+                                {% for exercise in all_exercises %}
+
+                                    <option
+                                        value="{{ exercise.id }}"
+                                        {% if exercise.id == item.exercise.id %}
+                                            selected
+                                        {% endif %}>
+
+                                        {{ exercise.name }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ORDER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Order
+                            </label>
+
+                            <input
+                                type="number"
+                                name="order"
+                                class="form-control"
+                                min="1"
+                                value="{{ item.order }}">
+
+                        </div>
+
+
+                        <!-- SETS -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Sets
+                            </label>
+
+                            <input
+                                type="number"
+                                name="sets"
+                                class="form-control"
+                                min="1"
+                                value="{{ item.sets|default_if_none:'' }}">
+
+                        </div>
+
+
+                        <!-- REPS -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Reps
+                            </label>
+
+                            <input
+                                type="text"
+                                name="reps"
+                                class="form-control"
+                                value="{{ item.reps }}">
+
+                        </div>
+
+
+                        <!-- WEIGHT -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Target Weight
+                            </label>
+
+                            <input
+                                type="text"
+                                name="target_weight"
+                                class="form-control"
+                                value="{{ item.target_weight }}">
+
+                        </div>
+
+
+                        <!-- DURATION -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Duration
+                            </label>
+
+                            <input
+                                type="number"
+                                name="duration_minutes"
+                                class="form-control"
+                                min="1"
+                                value="{{ item.duration_minutes|default_if_none:'' }}">
+
+                        </div>
+
+
+                        <!-- REST -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Rest
+                            </label>
+
+                            <input
+                                type="number"
+                                name="rest_seconds"
+                                class="form-control"
+                                min="0"
+                                value="{{ item.rest_seconds|default_if_none:'' }}">
+
+                        </div>
+
+
+                        <!-- NOTES -->
+
+                        <div
+                            class="form-group"
+                            style="grid-column:1/-1;">
+
+                            <label>
+                                Trainer Notes
+                            </label>
+
+                            <textarea
+                                name="trainer_notes"
+                                class="form-control"
+                                rows="4">{{ item.trainer_notes }}</textarea>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-edit"
+                        onclick="closeEditModal('{{ item.id }}')">
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+{% endfor %}
+
+
+
+<script>
+
+    function openEditModal(id) {
+
+        const modal =
+            document.getElementById("editModal" + id);
+
+        if (modal) {
+
+            modal.style.display = "flex";
+
+        }
+
+    }
+
+
+    function closeEditModal(id) {
+
+        const modal =
+            document.getElementById("editModal" + id);
+
+        if (modal) {
+
+            modal.style.display = "none";
+
+        }
+
+    }
+
+
+    function closeOutside(event, id) {
+
+        if (event.target.id === id) {
+
+            closeEditModal(id);
+
+        }
+
+    }
+
+
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Escape") {
+
+            document
+                .querySelectorAll(".modal-overlay")
+                .forEach(function(modal) {
+
+                    modal.style.display = "none";
+
+                });
+
+        }
+
+    });
+
+</script>
+
+{% endblock %}

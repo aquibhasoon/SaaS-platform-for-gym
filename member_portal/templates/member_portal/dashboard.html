@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Member Dashboard
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #f8fafc;
+
+            color: #111827;
+        }
+
+        .topbar {
+            background: white;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 20;
+        }
+
+        .topbar-inner {
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding:
+                15px 22px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            background: #4f46e5;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+        }
+
+        .brand-name {
+            font-weight: 800;
+
+            font-size: 17px;
+        }
+
+        .brand-subtitle {
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            margin-top: 2px;
+        }
+
+        .logout {
+            text-decoration: none;
+
+            color: #475569;
+
+            background: #f1f5f9;
+
+            padding:
+                9px 13px;
+
+            border-radius: 9px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .logout:hover {
+            background: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding:
+                28px 22px 50px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            margin: 0;
+
+            font-size: 30px;
+
+            font-weight: 800;
+        }
+
+        .welcome p {
+            margin:
+                7px 0 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: white;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 16px;
+
+            padding: 20px;
+        }
+
+        .stat-label {
+            color: #64748b;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .04em;
+        }
+
+        .stat-value {
+            margin-top: 9px;
+
+            font-size: 25px;
+
+            font-weight: 800;
+        }
+
+        .stat-note {
+            margin-top: 5px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                1.4fr 1fr;
+
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 16px;
+
+            padding: 22px;
+
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+        .card-header p {
+            margin:
+                5px 0 0;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            padding:
+                6px 9px;
+
+            border-radius: 999px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+        .badge-expired {
+            background: #fee2e2;
+
+            color: #b91c1c;
+        }
+
+        .membership-main {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            gap: 20px;
+
+            padding:
+                18px;
+
+            background: #f8fafc;
+
+            border-radius: 13px;
+        }
+
+        .plan-name {
+            font-size: 20px;
+
+            font-weight: 800;
+        }
+
+        .plan-price {
+            margin-top: 4px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+        .membership-dates {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+
+            margin-top: 18px;
+        }
+
+        .info-label {
+            color: #94a3b8;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            font-weight: 800;
+        }
+
+        .info-value {
+            margin-top: 5px;
+
+            font-weight: 700;
+
+            font-size: 13px;
+        }
+
+        .balance {
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border-radius: 12px;
+
+            background: #fff7ed;
+
+            color: #9a3412;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .paid {
+            background: #ecfdf5;
+
+            color: #047857;
+        }
+
+        .checkin {
+            padding: 15px;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            font-size: 13px;
+        }
+
+        .checkin strong {
+            display: block;
+
+            margin-bottom: 4px;
+        }
+
+        .list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .list-item {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding:
+                13px 0;
+
+            border-bottom:
+                1px solid #f1f5f9;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-title {
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .list-subtitle {
+            margin-top: 3px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+        .list-value {
+            font-size: 12px;
+
+            font-weight: 800;
+
+            text-align: right;
+        }
+
+        .workout-plan {
+            padding: 18px;
+
+            border-radius: 13px;
+
+            background: #eef2ff;
+
+            margin-bottom: 15px;
+        }
+
+        .workout-plan h3 {
+            margin: 0;
+
+            font-size: 17px;
+        }
+
+        .workout-plan p {
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        .exercise {
+            padding:
+                11px 0;
+
+            border-bottom:
+                1px solid #eef2ff;
+        }
+
+        .exercise:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-name {
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .exercise-meta {
+            margin-top: 4px;
+
+            color: #64748b;
+
+            font-size: 11px;
+        }
+
+        .progress-card {
+            background:
+                linear-gradient(135deg,
+                    #111827,
+                    #312e81);
+
+            color: white;
+
+            border: none;
+        }
+
+        .progress-card .card-header p {
+            color: #cbd5e1;
+        }
+
+        .progress-values {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+        }
+
+        .progress-value {
+            background:
+                rgba(255,
+                    255,
+                    255,
+                    .08);
+
+            padding: 15px;
+
+            border-radius: 12px;
+        }
+
+        .progress-value-label {
+            color: #cbd5e1;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            font-weight: 800;
+        }
+
+        .progress-value-number {
+            margin-top: 7px;
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+        .empty {
+            color: #94a3b8;
+
+            font-size: 13px;
+
+            text-align: center;
+
+            padding: 25px 10px;
+        }
+
+        @media (max-width: 1000px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar-inner {
+                padding:
+                    13px 15px;
+            }
+
+            .container {
+                padding:
+                    22px 15px 40px;
+            }
+
+            .welcome h1 {
+                font-size: 24px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .membership-main {
+                flex-direction: column;
+            }
+
+            .membership-dates {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-values {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <header class="topbar">
+
+        <div class="topbar-inner">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🏋️
+                </div>
+
+                <div>
+
+                    <div class="brand-name">
+                        {{ gym_settings.gym_name|default:"My Gym" }}
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Member Portal
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <form method="post" action="{% url 'member_portal:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+                    Logout
+                </button>
+            </form>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <section class="welcome">
+
+            <h1>
+                Welcome, {{ member.first_name }} 👋
+            </h1>
+
+            <p>
+                Here's an overview of your fitness journey.
+            </p>
+
+        </section>
+
+
+        <!-- ================= STATS ================= -->
+
+        <section class="stats">
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Membership
+                </div>
+
+                <div class="stat-value">
+
+                    {% if current_membership %}
+                    Active
+                    {% else %}
+                    Inactive
+                    {% endif %}
+
+                </div>
+
+                <div class="stat-note">
+
+                    {% if current_membership %}
+                    {{ days_remaining }} days remaining
+                    {% else %}
+                    No active membership
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Total Paid
+                </div>
+
+                <div class="stat-value">
+                    {{ gym_settings.currency_symbol|default:"₹" }}{{ total_paid }}
+                </div>
+
+                <div class="stat-note">
+                    Across memberships
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Balance
+                </div>
+
+                <div class="stat-value">
+                    {{ gym_settings.currency_symbol|default:"₹" }}{{ total_balance }}
+                </div>
+
+                <div class="stat-note">
+                    Amount pending
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Attendance
+                </div>
+
+                <div class="stat-value">
+                    {{ attendance_count }}
+                </div>
+
+                <div class="stat-note">
+                    Total check-ins
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <div class="grid">
+
+
+            <!-- ================= LEFT ================= -->
+
+            <div>
+
+
+                <!-- MEMBERSHIP -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Membership
+                            </h2>
+
+                            <p>
+                                Your current membership details
+                            </p>
+
+                        </div>
+
+                        {% if current_membership %}
+
+                        <span class="badge badge-active">
+                            ACTIVE
+                        </span>
+
+                        {% elif membership %}
+
+                        <span class="badge badge-expired">
+                            {{ membership.get_status_display|upper }}
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if membership %}
+
+                    <div class="membership-main">
+
+                        <div>
+
+                            <div class="plan-name">
+                                {{ membership.plan.name }}
+                            </div>
+
+                            <div class="plan-price">
+                                {{ gym_settings.currency_symbol|default:"₹" }}{{ membership.amount }}
+                            </div>
+
+                        </div>
+
+
+                        {% if current_membership %}
+
+                        <div style="text-align:right">
+
+                            <div class="info-label">
+                                Remaining
+                            </div>
+
+                            <div style="
+                                margin-top:5px;
+                                font-size:24px;
+                                font-weight:800;
+                            ">
+                                {{ days_remaining }}
+                            </div>
+
+                            <div style="
+                                color:#64748b;
+                                font-size:11px;
+                            ">
+                                days
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="membership-dates">
+
+                        <div>
+
+                            <div class="info-label">
+                                Start Date
+                            </div>
+
+                            <div class="info-value">
+                                {{ membership.start_date|date:"d M Y" }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="info-label">
+                                End Date
+                            </div>
+
+                            <div class="info-value">
+                                {{ membership.end_date|date:"d M Y" }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="
+                        balance
+                        {% if membership.is_fully_paid %}
+                            paid
+                        {% endif %}
+                    ">
+
+                        {% if membership.is_fully_paid %}
+
+                        ✓ Membership fully paid
+
+                        {% else %}
+
+                        {{ gym_settings.currency_symbol|default:"₹" }}
+                        {{ membership.balance_due }}
+                        pending on this membership
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% else %}
+
+                    <div class="empty">
+                        No membership information available.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- WORKOUT -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                My Workout
+                            </h2>
+
+                            <p>
+                                Your assigned training plan
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if current_workout %}
+
+                    <div class="workout-plan">
+
+                        <h3>
+                            {{ current_workout.plan.name }}
+                        </h3>
+
+                        {% if current_workout.plan.description %}
+
+                        <p>
+                            {{ current_workout.plan.description }}
+                        </p>
+
+                        {% endif %}
+
+                        {% for item in current_workout.plan.exercises.all %}
+
+                        <div class="exercise">
+
+                            <div class="exercise-name">
+
+                                {{ item.order }}.
+                                {{ item.exercise.name }}
+
+                            </div>
+
+                            <div class="exercise-meta">
+
+                                {% if item.sets %}
+                                {{ item.sets }} sets
+                                {% endif %}
+
+                                {% if item.reps %}
+                                · {{ item.reps }} reps
+                                {% endif %}
+
+                                {% if item.target_weight %}
+                                · {{ item.target_weight }}
+                                {% endif %}
+
+                                {% if item.rest_seconds %}
+                                · {{ item.rest_seconds }} sec rest
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <div class="empty">
+                            No exercises added to this plan yet.
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {% else %}
+
+                    <div class="empty">
+                        No active workout plan has been assigned yet.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PROGRESS -->
+
+                <div class="card progress-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Fitness Progress
+                            </h2>
+
+                            <p>
+                                Your latest recorded measurements
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if latest_progress %}
+
+                    <div class="progress-values">
+
+
+                        <div class="progress-value">
+
+                            <div class="progress-value-label">
+                                Weight
+                            </div>
+
+                            <div class="progress-value-number">
+
+                                {% if latest_progress.weight %}
+                                {{ latest_progress.weight }} kg
+                                {% else %}
+                                —
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-value">
+
+                            <div class="progress-value-label">
+                                Body Fat
+                            </div>
+
+                            <div class="progress-value-number">
+
+                                {% if latest_progress.body_fat %}
+                                {{ latest_progress.body_fat }}%
+                                {% else %}
+                                —
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-value">
+
+                            <div class="progress-value-label">
+                                Waist
+                            </div>
+
+                            <div class="progress-value-number">
+
+                                {% if latest_progress.waist %}
+                                {{ latest_progress.waist }} cm
+                                {% else %}
+                                —
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div style="
+                        margin-top:14px;
+                        color:#cbd5e1;
+                        font-size:11px;
+                    ">
+
+                        Last measurement:
+                        {{ latest_progress.measurement_date|date:"d M Y" }}
+
+                    </div>
+
+
+                    {% else %}
+
+                    <div class="empty" style="color:#cbd5e1">
+                        No progress measurements have been recorded yet.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= RIGHT ================= -->
+
+            <div>
+
+
+                <!-- ATTENDANCE -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Attendance
+                            </h2>
+
+                            <p>
+                                Your recent gym visits
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="checkin">
+
+                        {% if today_checked_in %}
+
+                        <strong>
+                            ✓ Checked in today
+                        </strong>
+
+                        Your attendance has been recorded.
+
+                        {% else %}
+
+                        <strong>
+                            Not checked in today
+                        </strong>
+
+                        Your next scan will appear here.
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="list">
+
+                        {% for attendance in recent_attendance %}
+
+                        <div class="list-item">
+
+                            <div>
+
+                                <div class="list-title">
+                                    Gym Visit
+                                </div>
+
+                                <div class="list-subtitle">
+                                    {{ attendance.check_in|date:"d M Y" }}
+                                </div>
+
+                            </div>
+
+                            <div class="list-value">
+
+                                {{ attendance.check_in|date:"h:i A" }}
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <div class="empty">
+                            No attendance records yet.
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- PAYMENTS -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Payment History
+                            </h2>
+
+                            <p>
+                                Your recent payments
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="list">
+
+                        {% for payment in payments %}
+
+                        <div class="list-item">
+
+                            <div>
+
+                                <div class="list-title">
+                                    {{ payment.receipt_number }}
+                                </div>
+
+                                <div class="list-subtitle">
+
+                                    {{ payment.payment_date|date:"d M Y" }}
+
+                                    ·
+
+                                    {{ payment.get_payment_method_display }}
+
+                                </div>
+
+                            </div>
+
+                            <div class="list-value">
+
+                                {{ gym_settings.currency_symbol|default:"₹" }}
+                                {{ payment.amount }}
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <div class="empty">
+                            No payments recorded yet.
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                My Profile
+                            </h2>
+
+                            <p>
+                                Your registered information
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="membership-dates">
+
+                        <div>
+
+                            <div class="info-label">
+                                Member ID
+                            </div>
+
+                            <div class="info-value">
+                                {{ member.member_id }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="info-label">
+                                Phone
+                            </div>
+
+                            <div class="info-value">
+                                {{ member.phone|default:"—" }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="info-label">
+                                Email
+                            </div>
+
+                            <div class="info-value">
+                                {{ member.email|default:"—" }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="info-label">
+                                Joined
+                            </div>
+
+                            <div class="info-value">
+                                {{ member.join_date|date:"d M Y" }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,597 @@
+{% extends "base.html" %}
+
+{% block title %}
+Audit Logs - {{ gym_settings.gym_name|default:"GYM" }}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Audit Logs</h1>
+
+    <p>
+        Review important activity performed by staff accounts.
+    </p>
+</div>
+
+
+<!-- SUMMARY -->
+
+<div class="summary-card">
+    <div class="summary-icon">
+        🛡️
+    </div>
+
+    <div>
+        <div class="summary-label">
+            Matching Activities
+        </div>
+
+        <div class="summary-value">
+            {{ total_logs }}
+        </div>
+    </div>
+</div>
+
+
+<!-- FILTERS -->
+
+<div class="filter-card">
+
+    <form method="get">
+
+        <div class="filter-grid">
+
+            <div class="form-group">
+                <label for="search">
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    id="search"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Staff, description, module..."
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="action">
+                    Action
+                </label>
+
+                <select
+                    id="action"
+                    name="action"
+                >
+                    <option value="">
+                        All actions
+                    </option>
+
+                    {% for value, label in action_choices %}
+                        <option
+                            value="{{ value }}"
+                            {% if action == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="from_date">
+                    From
+                </label>
+
+                <input
+                    type="date"
+                    id="from_date"
+                    name="from_date"
+                    value="{{ from_date }}"
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="to_date">
+                    To
+                </label>
+
+                <input
+                    type="date"
+                    id="to_date"
+                    name="to_date"
+                    value="{{ to_date }}"
+                >
+            </div>
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                Apply Filters
+            </button>
+
+            <a
+                href="{% url 'audit_logs:list' %}"
+                class="btn-secondary"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- AUDIT TABLE -->
+
+<div class="table-card">
+
+    <div class="table-header">
+        <div>
+            <h2>Activity History</h2>
+
+            <p>
+                Audit records are read-only.
+            </p>
+        </div>
+    </div>
+
+
+    {% if logs %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Staff</th>
+                        <th>Action</th>
+                        <th>Module</th>
+                        <th>Description</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for log in logs %}
+
+                        <tr>
+
+                            <td>
+                                {{ log.created_at|date:"d M Y" }}
+                                <br>
+
+                                <span class="muted">
+                                    {{ log.created_at|time:"h:i A" }}
+                                </span>
+                            </td>
+
+
+                            <td>
+
+                                {% if log.user %}
+
+                                    <strong>
+                                        {{ log.user.get_full_name|default:log.user.username }}
+                                    </strong>
+
+                                    <br>
+
+                                    <span class="muted">
+                                        {{ log.user.username }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="muted">
+                                        System
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="action-badge action-{{ log.action }}">
+                                    {{ log.get_action_display }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if log.model_name %}
+
+                                    {{ log.model_name }}
+
+                                    {% if log.object_id %}
+                                        <br>
+
+                                        <span class="muted">
+                                            #{{ log.object_id }}
+                                        </span>
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <span class="muted">
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="description-cell">
+                                {{ log.description }}
+                            </td>
+
+
+                            <td>
+                                {{ log.ip_address|default:"—" }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🛡️
+            </div>
+
+            <h3>
+                No audit activity found
+            </h3>
+
+            <p>
+                Try changing your filters or perform an action
+                in the system.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    .summary-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+
+        padding: 20px;
+
+        margin-bottom: 22px;
+
+        max-width: 300px;
+    }
+
+
+    .summary-icon {
+        width: 48px;
+        height: 48px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #f1f5f9;
+
+        border-radius: 12px;
+
+        font-size: 23px;
+    }
+
+
+    .summary-label {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+
+    .summary-value {
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+
+    .filter-card,
+    .table-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        margin-bottom: 22px;
+    }
+
+
+    .filter-card {
+        padding: 22px;
+    }
+
+
+    .filter-grid {
+        display: grid;
+
+        grid-template-columns:
+            minmax(180px, 2fr)
+            minmax(150px, 1fr)
+            minmax(150px, 1fr)
+            minmax(150px, 1fr);
+
+        gap: 16px;
+    }
+
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+
+        padding: 11px 12px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+
+        background: white;
+
+        font: inherit;
+    }
+
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #64748b;
+    }
+
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+
+        margin-top: 18px;
+    }
+
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 10px 17px;
+
+        border-radius: 9px;
+
+        font: inherit;
+        font-weight: 600;
+
+        text-decoration: none;
+
+        cursor: pointer;
+    }
+
+
+    .btn-primary {
+        border: none;
+        background: #111827;
+        color: white;
+    }
+
+
+    .btn-secondary {
+        border: 1px solid #d1d5db;
+        background: white;
+        color: #374151;
+    }
+
+
+    .table-header {
+        padding: 20px 22px;
+
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .table-header h2 {
+        margin: 0;
+        font-size: 19px;
+    }
+
+
+    .table-header p {
+        margin: 5px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 950px;
+    }
+
+
+    th {
+        padding: 13px 18px;
+
+        text-align: left;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+
+        white-space: nowrap;
+    }
+
+
+    td {
+        padding: 15px 18px;
+
+        border-top: 1px solid #eef2f7;
+
+        font-size: 14px;
+
+        vertical-align: top;
+    }
+
+
+    tbody tr:hover {
+        background: #fafafa;
+    }
+
+
+    .muted {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+
+    .description-cell {
+        min-width: 280px;
+        max-width: 450px;
+        line-height: 1.5;
+    }
+
+
+    .action-badge {
+        display: inline-flex;
+
+        padding: 5px 9px;
+
+        border-radius: 999px;
+
+        background: #f1f5f9;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .empty-state {
+        padding: 60px 20px;
+
+        text-align: center;
+    }
+
+
+    .empty-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+    }
+
+
+    .empty-state p {
+        margin: 0;
+        color: #64748b;
+    }
+
+
+    @media (max-width: 900px) {
+
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 550px) {
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}

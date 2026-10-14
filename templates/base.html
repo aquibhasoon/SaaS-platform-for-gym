@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}GYM Management{% endblock %}
+    </title>
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+
+
+
+        /* =========================
+           APP LAYOUT
+        ========================== */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================== */
+
+        .sidebar {
+            width: 288px;
+            background: #111827;
+            color: white;
+            min-height: 100vh;
+
+            padding: 24px 18px;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            overflow-y: auto;
+
+            z-index: 1000;
+        }
+
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 0 18px;
+            margin-bottom: 35px;
+        }
+
+
+        .brand-icon {
+            font-size: 24px;
+        }
+
+
+        .brand-name {
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 14px 18px;
+
+            color: #aeb9ce;
+            text-decoration: none;
+
+            border-radius: 11px;
+
+            font-size: 16px;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+            background: #1c2738;
+            color: white;
+        }
+
+
+        .nav-link.active {
+            background: #202d40;
+            color: white;
+        }
+
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================== */
+
+        .main {
+            margin-left: 288px;
+            width: calc(100% - 288px);
+            min-height: 100vh;
+        }
+
+
+        .content {
+            padding: 40px 36px;
+            max-width: 1600px;
+        }
+
+
+        /* =========================
+           MOBILE HEADER
+        ========================== */
+
+        .mobile-header {
+            display: none;
+
+            height: 64px;
+            background: #111827;
+
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 18px;
+
+            color: white;
+        }
+
+
+        .mobile-brand {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        .menu-button {
+            border: none;
+            background: #202d40;
+            color: white;
+
+            width: 42px;
+            height: 42px;
+
+            border-radius: 9px;
+
+            font-size: 21px;
+            cursor: pointer;
+        }
+
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+
+        .sidebar-logout {
+            margin-top: auto;
+            padding: 16px;
+        }
+
+        .sidebar-logout form {
+            margin: 0;
+        }
+
+        .sidebar-logout button {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 12px 14px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: transparent;
+
+            color: #ef4444;
+
+            font: inherit;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            text-align: left;
+
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-logout button:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+            }
+
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+
+            .mobile-header {
+                display: flex;
+            }
+
+
+            .content {
+                padding: 25px 20px;
+            }
+
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+
+                background: rgba(0, 0, 0, 0.45);
+
+                z-index: 900;
+            }
+
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .content {
+                padding: 20px 14px;
+            }
+
+        }
+
+
+        /* =========================
+           OPTIONAL PAGE STYLES
+        ========================== */
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+
+        .page-header p {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 16px;
+        }
+    </style>
+
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+    <div class="app">
+
+
+        <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+
+            <!-- BRAND -->
+
+            <div class="brand">
+
+                <span class="brand-icon">
+                    🏋️
+                </span>
+
+                <span class="brand-name">
+                    {% if gym_settings %}
+                    {{ gym_settings.gym_name }}
+                    {% else %}
+                    GYM
+                    {% endif %}
+                </span>
+
+            </div>
+
+
+            <!-- NAVIGATION -->
+
+            <nav class="nav">
+
+
+                <!-- =========================
+                 DASHBOARD
+            ========================== -->
+
+                <a href="{% url 'dashboard:home' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        🏠
+                    </span>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <!-- =========================
+                 MEMBERS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_members %}
+
+                <a href="{% url 'members:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'members' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        👥
+                    </span>
+
+                    <span>
+                        Members
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 MEMBERSHIPS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_memberships %}
+
+                <a href="{% url 'memberships:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'memberships' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        💳
+                    </span>
+
+                    <span>
+                        Memberships
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 PAYMENTS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_payments %}
+
+                <a href="{% url 'payments:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        💰
+                    </span>
+
+                    <span>
+                        Payments
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 ATTENDANCE
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_attendance %}
+
+                <a href="{% url 'attendance:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'attendance' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        📷
+                    </span>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 TRAINERS
+            ========================== -->
+
+                {% if request.user.role == "owner" %}
+
+                <a href="{% url 'trainers:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'trainers' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        👨‍🏫
+                    </span>
+
+                    <span>
+                        Trainers
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 WORKOUTS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_workouts %}
+
+                <a href="{% url 'workouts:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'workouts' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        🏋️
+                    </span>
+
+                    <span>
+                        Workouts
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 PROGRESS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_progress %}
+
+                <a href="{% url 'progress:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'progress' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        📈
+                    </span>
+
+                    <span>
+                        Progress
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 REPORTS
+            ========================== -->
+
+                {% if request.user.role == "owner" or request.user.trainer_permissions.can_view_reports %}
+
+                <a href="{% url 'reports:dashboard' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'reports' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        📊
+                    </span>
+
+                    <span>
+                        Reports
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+                <!-- =========================
+                 SETTINGS
+            ========================== -->
+
+                {% if request.user.role == "owner" %}
+
+                <a href="{% url 'gym_settings:dashboard' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'gym_settings' %}active{% endif %}">
+
+                    <span class="nav-icon">
+                        ⚙️
+                    </span>
+
+                    <span>
+                        Settings
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+                {% if request.user.role == "owner" %}
+
+                <a href="{% url 'audit_logs:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'audit_logs' %}active{% endif %}">
+                    <span class="nav-icon">
+                        🛡️
+                    </span>
+
+                    <span>
+                        Audit Logs
+                    </span>
+                </a>
+
+                {% endif %}
+
+                <div class="sidebar-logout">
+
+                    <form method="post" action="{% url 'accounts:logout' %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+
+                            <span>↪</span>
+
+                            <span>
+                                Logout
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+            </nav>
+
+
+        </aside>
+
+
+        <!-- =========================
+         MOBILE OVERLAY
+    ========================== -->
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+
+        <!-- =========================
+         MAIN
+    ========================== -->
+
+        <main class="main">
+
+
+            <!-- MOBILE HEADER -->
+
+            <div class="mobile-header">
+
+                <div class="mobile-brand">
+
+                    🏋️
+
+                    {% if gym_settings %}
+                    {{ gym_settings.gym_name }}
+                    {% else %}
+                    GYM
+                    {% endif %}
+
+                </div>
+
+
+                <button class="menu-button" onclick="toggleSidebar()">
+                    ☰
+                </button>
+
+            </div>
+
+
+            <!-- PAGE CONTENT -->
+
+            <div class="content">
+
+                {% block content %}
+                {% endblock %}
+
+            </div>
+
+
+        </main>
+
+
+    </div>
+
+
+    <!-- =========================
+     SIDEBAR JAVASCRIPT
+========================== -->
+
+    <script>
+
+
+        function toggleSidebar() {
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+
+            sidebar.classList.toggle("open");
+
+            overlay.classList.toggle("show");
+
+        }
+
+
+        function closeSidebar() {
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+
+            sidebar.classList.remove("open");
+
+            overlay.classList.remove("show");
+
+        }
+
+
+        /*
+         * Automatically close the mobile sidebar
+         * after clicking a navigation link.
+         */
+
+        document.querySelectorAll(".nav-link").forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                if (window.innerWidth <= 900) {
+                    closeSidebar();
+                }
+
+            });
+
+        });
+
+
+    </script>
+
+
+    {% block extra_js %}
+    {% endblock %}
+
+
+</body>
+
+</html>

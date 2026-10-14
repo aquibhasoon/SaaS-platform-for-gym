@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        color: #111827;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .scan-button {
+        display: inline-block;
+        padding: 12px 18px;
+        background: #111827;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+
+    /* STATS */
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .stat-title {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+
+    /* FILTERS */
+
+    .filters {
+        background: white;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .filters form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .filters input {
+        padding: 11px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+    }
+
+    .search {
+        flex: 1;
+    }
+
+    .filters button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #111827;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .clear-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        color: #374151;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+
+    /* TABLE */
+
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    th,
+    td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    th {
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        background: #f9fafb;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* MEMBER */
+
+    .member-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .member-id {
+        display: block;
+        color: #9ca3af;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+
+    /* EMPTY */
+
+    .empty {
+        text-align: center;
+        padding: 50px;
+        color: #6b7280;
+    }
+
+
+    @media (max-width: 650px) {
+
+        .page-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scan-button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .stats {
+            grid-template-columns: 1fr;
+        }
+
+        .filters form {
+            flex-direction: column;
+        }
+
+        .filters input,
+        .filters button,
+        .clear-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Attendance
+        </h1>
+
+        <p>
+            Track member check-ins and daily attendance.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'attendance:scanner' %}"
+        class="scan-button"
+    >
+        📷 Scan QR
+    </a>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Check-ins
+        </div>
+
+        <div class="stat-value">
+            {{ total_checkins }}
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Unique Members
+        </div>
+
+        <div class="stat-value">
+            {{ unique_members }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="filters">
+
+    <form method="get">
+
+        <input
+            type="text"
+            name="search"
+            class="search"
+            placeholder="Search member name, ID or phone..."
+            value="{{ search }}"
+        >
+
+
+        <input
+            type="date"
+            name="date"
+            value="{{ selected_date|date:'Y-m-d' }}"
+        >
+
+
+        <button type="submit">
+            Filter
+        </button>
+
+
+        {% if search or selected_date %}
+
+            <a
+                href="{% url 'attendance:list' %}"
+                class="clear-button"
+            >
+                Today
+            </a>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Member
+                </th>
+
+                <th>
+                    Check-in Time
+                </th>
+
+                <th>
+                    Scanned By
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for attendance in attendance_records %}
+
+            <tr>
+
+                <td>
+
+                    <span class="member-name">
+                        {{ attendance.member.full_name }}
+                    </span>
+
+                    <span class="member-id">
+                        {{ attendance.member.member_id }}
+                    </span>
+
+                </td>
+
+
+                <td>
+                    {{ attendance.check_in|date:"h:i A" }}
+                </td>
+
+
+                <td>
+
+                    {% if attendance.scanned_by %}
+
+                        {{ attendance.scanned_by.get_full_name|default:attendance.scanned_by.username }}
+
+                    {% else %}
+
+                        System
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="empty"
+                >
+
+                    No attendance records found for this date.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% endblock %}

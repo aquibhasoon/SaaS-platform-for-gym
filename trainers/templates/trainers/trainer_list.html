@@ -1,0 +1,721 @@
+{% extends "base.html" %}
+
+{% block title %}Trainers | GYM Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .trainer-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .trainer-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .trainer-hero h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        color: #111827;
+    }
+
+    .trainer-hero p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .trainer-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 16px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .trainer-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, .10);
+    }
+
+    .trainer-btn-primary {
+        background: #111827;
+        color: white;
+    }
+
+    .trainer-btn-light {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .trainer-btn-danger {
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+    }
+
+    .trainer-btn-success {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+    }
+
+    .trainer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .trainer-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 7px 24px rgba(15, 23, 42, .05);
+    }
+
+    .trainer-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .trainer-identity {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+    }
+
+    .trainer-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        background: #eef2ff;
+        font-size: 22px;
+    }
+
+    .trainer-name {
+        margin: 0;
+        font-size: 17px;
+        color: #111827;
+        overflow-wrap: anywhere;
+    }
+
+    .trainer-username {
+        margin: 4px 0 0;
+        color: #6b7280;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .trainer-status {
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .trainer-status-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .trainer-status-inactive {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .trainer-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .trainer-card-actions form {
+        margin: 0;
+    }
+
+    .trainer-card-actions a,
+    .trainer-card-actions button {
+        text-decoration: none;
+    }
+
+    .assignment-count {
+        margin: 18px 0 0;
+        padding: 12px 13px;
+        border-radius: 11px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .assignment-section {
+        margin-top: 24px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 7px 24px rgba(15, 23, 42, .05);
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 5px;
+        font-size: 20px;
+        color: #111827;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .assignment-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+        padding: 16px;
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 14px;
+        margin-bottom: 20px;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #374151;
+    }
+
+    .assignment-form select {
+        width: 100%;
+        min-width: 0;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: #fff;
+        color: #111827;
+        font: inherit;
+        outline: none;
+    }
+
+    .assignment-form select:focus {
+        border-color: #64748b;
+        box-shadow: 0 0 0 3px rgba(100, 116, 139, .12);
+    }
+
+    .assignment-table-wrap {
+        overflow-x: auto;
+    }
+
+    .assignment-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    .assignment-table th,
+    .assignment-table td {
+        padding: 13px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    .assignment-table th {
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .assignment-table td {
+        color: #334155;
+    }
+
+    .member-name {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .member-id {
+        display: block;
+        margin-top: 3px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .no-data {
+        padding: 28px;
+        text-align: center;
+        color: #64748b;
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+
+    .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, .55);
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-backdrop.show {
+        display: flex;
+    }
+
+    .trainer-modal {
+        width: min(600px, 100%);
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .22);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+        margin: 0 0 5px;
+        font-size: 21px;
+        color: #111827;
+    }
+
+    .modal-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .modal-close {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 9px;
+        background: #f3f4f6;
+        color: #374151;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .modal-form p {
+        margin: 0 0 14px;
+    }
+
+    .modal-form label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #374151;
+    }
+
+    .modal-form input,
+    .modal-form select,
+    .modal-form textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: #fff;
+        font: inherit;
+        color: #111827;
+    }
+
+    .modal-form .helptext {
+        display: block;
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .modal-form ul.errorlist {
+        margin: 5px 0;
+        padding-left: 18px;
+        color: #b91c1c;
+        font-size: 12px;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    .permission-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 15px;
+    }
+
+    .permission-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #eef2f7;
+        border-radius: 9px;
+        background: #f8fafc;
+        font-size: 12px;
+        color: #374151;
+    }
+
+    .permission-item input {
+        width: auto;
+    }
+
+    @media (max-width: 850px) {
+        .trainer-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .assignment-form {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .trainer-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .trainer-hero .trainer-btn {
+            width: 100%;
+        }
+
+        .assignment-section,
+        .trainer-card {
+            padding: 17px;
+        }
+
+        .permission-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .trainer-modal {
+            padding: 19px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="trainer-page">
+
+    <div class="trainer-hero">
+        <div>
+            <h1>Trainers</h1>
+            <p>Manage trainer accounts, permissions, and member assignments.</p>
+        </div>
+
+        <button type="button" class="trainer-btn trainer-btn-primary"
+                onclick="openTrainerModal()">
+            + Add Trainer
+        </button>
+    </div>
+
+    {% if trainers %}
+    <div class="trainer-grid">
+        {% for trainer in trainers %}
+        <article class="trainer-card">
+            <div class="trainer-card-top">
+                <div class="trainer-identity">
+                    <div class="trainer-avatar">🏋️</div>
+                    <div>
+                        <h3 class="trainer-name">
+                            {{ trainer.get_full_name|default:trainer.username }}
+                        </h3>
+                        <p class="trainer-username">@{{ trainer.username }}</p>
+                    </div>
+                </div>
+
+                {% if trainer.is_active %}
+                <span class="trainer-status trainer-status-active">Active</span>
+                {% else %}
+                <span class="trainer-status trainer-status-inactive">Inactive</span>
+                {% endif %}
+            </div>
+
+            <div class="assignment-count">
+                {% with count=trainer.member_assignments.all|length %}
+                    {{ count }} assigned member{{ count|pluralize }}
+                {% endwith %}
+            </div>
+
+            <div class="trainer-card-actions">
+                <a class="trainer-btn trainer-btn-light"
+                   href="?permissions={{ trainer.id }}">
+                    Permissions
+                </a>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="toggle_status">
+                    <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
+                    {% if trainer.is_active %}
+                    <button type="submit" class="trainer-btn trainer-btn-danger">
+                        Deactivate
+                    </button>
+                    {% else %}
+                    <button type="submit" class="trainer-btn trainer-btn-success">
+                        Activate
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-data">
+        <strong>No trainers yet.</strong>
+        <div style="margin-top:6px;">Create your first trainer account to get started.</div>
+    </div>
+    {% endif %}
+
+    <section class="assignment-section">
+        <div class="section-heading">
+            <div>
+                <h2>Trainer ↔ Member Assignments</h2>
+                <p>Assign active members to trainers so trainers can work only with their assigned members.</p>
+            </div>
+        </div>
+
+        {% if trainers and available_members %}
+        <form method="post" class="assignment-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="assign_member">
+
+            <div>
+                <label class="field-label" for="assignmentTrainer">Trainer</label>
+                <select id="assignmentTrainer" name="trainer_id" required>
+                    <option value="">Select trainer</option>
+                    {% for trainer in trainers %}
+                        {% if trainer.is_active %}
+                        <option value="{{ trainer.id }}">
+                            {{ trainer.get_full_name|default:trainer.username }}
+                        </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="field-label" for="assignmentMember">Member</label>
+                <select id="assignmentMember" name="member_id" required>
+                    <option value="">Select member</option>
+                    {% for member in available_members %}
+                    <option value="{{ member.id }}">
+                        {{ member.full_name }} — {{ member.member_id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="trainer-btn trainer-btn-primary">
+                Assign Member
+            </button>
+        </form>
+        {% endif %}
+
+        {% if member_assignments %}
+        <div class="assignment-table-wrap">
+            <table class="assignment-table">
+                <thead>
+                    <tr>
+                        <th>Trainer</th>
+                        <th>Member</th>
+                        <th>Assigned By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in member_assignments %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {{ assignment.trainer.get_full_name|default:assignment.trainer.username }}
+                            </strong>
+                        </td>
+                        <td>
+                            <span class="member-name">{{ assignment.member.full_name }}</span>
+                            <span class="member-id">{{ assignment.member.member_id }}</span>
+                        </td>
+                        <td>
+                            {% if assignment.assigned_by %}
+                                {{ assignment.assigned_by.get_full_name|default:assignment.assigned_by.username }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="unassign_member">
+                                <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+                                <button type="submit"
+                                        class="trainer-btn trainer-btn-danger"
+                                        onclick="return confirm('Unassign this member from the trainer?');">
+                                    Unassign
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-data">
+            No trainer-member assignments yet.
+        </div>
+        {% endif %}
+    </section>
+
+    {% if selected_trainer and permission_form %}
+    <div class="assignment-section" style="margin-top:24px;">
+        <div class="section-heading">
+            <div>
+                <h2>Permissions — {{ selected_trainer.get_full_name|default:selected_trainer.username }}</h2>
+                <p>Choose exactly what this trainer can view or manage.</p>
+            </div>
+            <a href="{% url 'trainers:list' %}" class="trainer-btn trainer-btn-light">Close</a>
+        </div>
+
+        <form method="post" class="modal-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="permissions">
+            <input type="hidden" name="trainer_id" value="{{ selected_trainer.id }}">
+
+            <div class="permission-grid">
+                {% for field in permission_form %}
+                <label class="permission-item">
+                    {{ field }}
+                    <span>{{ field.label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="trainer-btn trainer-btn-primary">
+                    Save Permissions
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<div id="trainerModal" class="modal-backdrop" aria-hidden="true">
+    <div class="trainer-modal" role="dialog" aria-modal="true" aria-labelledby="trainerModalTitle">
+        <div class="modal-header">
+            <div>
+                <h2 id="trainerModalTitle">Add Trainer</h2>
+                <p>Create a staff account for a gym trainer.</p>
+            </div>
+            <button type="button" class="modal-close" onclick="closeTrainerModal()" aria-label="Close">
+                ×
+            </button>
+        </div>
+
+        <form method="post" class="modal-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_trainer">
+
+            {{ create_form.as_p }}
+
+            <div class="modal-actions">
+                <button type="button" class="trainer-btn trainer-btn-light"
+                        onclick="closeTrainerModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="trainer-btn trainer-btn-primary">
+                    Create Trainer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openTrainerModal() {
+    const modal = document.getElementById("trainerModal");
+    if (!modal) return;
+
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+
+    const firstInput = modal.querySelector("input:not([type='hidden'])");
+    if (firstInput) firstInput.focus();
+}
+
+function closeTrainerModal() {
+    const modal = document.getElementById("trainerModal");
+    if (!modal) return;
+
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("trainerModal");
+
+    if (modal) {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeTrainerModal();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeTrainerModal();
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,636 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .settings-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .settings-header {
+        margin-bottom: 28px;
+    }
+
+    .settings-header h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .settings-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .settings-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .section-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .section-title h2 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 750;
+    }
+
+    .section-title p {
+        margin: 3px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        font-size: 14px;
+        font-weight: 650;
+        color: #334155;
+    }
+
+    .form-input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 11px 13px;
+        font-size: 14px;
+        background: #ffffff;
+        color: #0f172a;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #64748b;
+        box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+    }
+
+    textarea.form-input {
+        resize: vertical;
+    }
+
+    .help-text {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .error-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: #dc2626;
+        font-size: 12px;
+    }
+
+    .logo-preview {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .logo-preview img {
+        width: 82px;
+        height: 82px;
+        object-fit: contain;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        padding: 8px;
+    }
+
+    .logo-placeholder {
+        width: 82px;
+        height: 82px;
+        border-radius: 16px;
+        background: #f1f5f9;
+        border: 1px dashed #cbd5e1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .logo-info strong {
+        display: block;
+        font-size: 14px;
+        color: #334155;
+        margin-bottom: 4px;
+    }
+
+    .logo-info span {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-save {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .current-logo {
+        margin-top: 8px;
+    }
+
+    @media (max-width: 700px) {
+
+        .settings-card {
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        .settings-header h1 {
+            font-size: 25px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-actions {
+            justify-content: stretch;
+        }
+
+        .btn-save {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="settings-page">
+
+    <div class="settings-header">
+
+        <h1>Settings</h1>
+
+        <p>
+            Manage your gym information and system preferences.
+        </p>
+
+    </div>
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- GYM INFORMATION -->
+
+        <div class="settings-card">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    🏢
+                </div>
+
+                <div>
+
+                    <h2>Gym Information</h2>
+
+                    <p>
+                        Basic information about your gym.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Gym Name
+                    </label>
+
+                    {{ form.gym_name }}
+
+                    {% for error in form.gym_name.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Tagline
+                    </label>
+
+                    {{ form.tagline }}
+
+                    {% for error in form.tagline.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label class="form-label">
+                        Logo
+                    </label>
+
+
+                    {% if gym_settings.logo %}
+
+                        <div class="logo-preview">
+
+                            <img
+                                src="{{ gym_settings.logo.url }}"
+                                alt="Gym logo"
+                            >
+
+                            <div class="logo-info">
+
+                                <strong>
+                                    Current gym logo
+                                </strong>
+
+                                <span>
+                                    Upload a new image to replace it.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="logo-preview">
+
+                            <div class="logo-placeholder">
+                                🏋️
+                            </div>
+
+                            <div class="logo-info">
+
+                                <strong>
+                                    No logo uploaded
+                                </strong>
+
+                                <span>
+                                    Upload your gym logo below.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {{ form.logo }}
+
+                    {% for error in form.logo.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTACT -->
+
+        <div class="settings-card">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    📞
+                </div>
+
+                <div>
+
+                    <h2>Contact Information</h2>
+
+                    <p>
+                        Contact details displayed throughout the system.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Phone
+                    </label>
+
+                    {{ form.phone }}
+
+                    {% for error in form.phone.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Email
+                    </label>
+
+                    {{ form.email }}
+
+                    {% for error in form.email.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label class="form-label">
+                        Website
+                    </label>
+
+                    {{ form.website }}
+
+                    {% for error in form.website.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div class="settings-card">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    📍
+                </div>
+
+                <div>
+
+                    <h2>Gym Address</h2>
+
+                    <p>
+                        Your gym's physical location.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label class="form-label">
+                        Address
+                    </label>
+
+                    {{ form.address }}
+
+                    {% for error in form.address.errors %}
+                        <ul class="error-list">
+                            <li>{{ error }}</li>
+                        </ul>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        City
+                    </label>
+
+                    {{ form.city }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        State
+                    </label>
+
+                    {{ form.state }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Country
+                    </label>
+
+                    {{ form.country }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        PIN Code
+                    </label>
+
+                    {{ form.pincode }}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- BILLING -->
+
+        <div class="settings-card">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    💳
+                </div>
+
+                <div>
+
+                    <h2>Billing & Receipts</h2>
+
+                    <p>
+                        Configure currency and receipt information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Currency Symbol
+                    </label>
+
+                    {{ form.currency_symbol }}
+
+                    <span class="help-text">
+                        Example: ₹, $, €, £
+                    </span>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label class="form-label">
+                        Receipt Footer
+                    </label>
+
+                    {{ form.receipt_footer }}
+
+                    <span class="help-text">
+                        This message can appear at the bottom of payment receipts.
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-save"
+            >
+                Save Settings
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

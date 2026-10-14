@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Receipt {{ payment.receipt_number }}
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .page {
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .receipt {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ---------------- HEADER ---------------- */
+
+        .gym-header {
+            text-align: center;
+            padding-bottom: 24px;
+            border-bottom: 2px dashed #d1d5db;
+        }
+
+        .logo {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .gym-name {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            margin: 6px 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .gym-contact {
+            margin-top: 10px;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* ---------------- RECEIPT TITLE ---------------- */
+
+        .receipt-title {
+            text-align: center;
+            padding: 24px 0 10px;
+        }
+
+        .receipt-title h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1.5px;
+        }
+
+        .receipt-number {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* ---------------- DETAILS ---------------- */
+
+        .section {
+            margin-top: 22px;
+        }
+
+        .section-title {
+            margin: 0 0 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6b7280;
+        }
+
+        .details {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 13px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .value {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ---------------- PAYMENT AMOUNT ---------------- */
+
+        .payment-box {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f9fafb;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .payment-label {
+            color: #6b7280;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .payment-amount {
+            margin-top: 8px;
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        /* ---------------- BALANCE SUMMARY ---------------- */
+
+        .summary {
+            margin-top: 20px;
+            border-top: 1px dashed #d1d5db;
+            border-bottom: 1px dashed #d1d5db;
+        }
+
+        .summary .row {
+            padding: 12px 4px;
+        }
+
+        .balance {
+            font-weight: 800;
+        }
+
+        /* ---------------- FOOTER ---------------- */
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 2px dashed #d1d5db;
+        }
+
+        .footer-message {
+            margin: 0;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .footer-contact {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* ---------------- BUTTONS ---------------- */
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .button {
+            flex: 1;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 13px 16px;
+            border-radius: 9px;
+            border: none;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .print-button {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .back-button {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .print-button:hover {
+            opacity: 0.9;
+        }
+
+        .back-button:hover {
+            background: #d1d5db;
+        }
+
+        /* ---------------- MOBILE ---------------- */
+
+        @media (max-width: 600px) {
+
+            .page {
+                margin: 0;
+                padding: 10px;
+            }
+
+            .receipt {
+                padding: 22px 18px;
+                border-radius: 12px;
+            }
+
+            .gym-name {
+                font-size: 23px;
+            }
+
+            .row {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .value {
+                text-align: left;
+            }
+
+            .payment-amount {
+                font-size: 30px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+        }
+
+        /* ---------------- PRINT ---------------- */
+
+        @media print {
+
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+
+            body {
+                background: #ffffff;
+            }
+
+            .page {
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .receipt {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 10px;
+            }
+
+            .actions {
+                display: none !important;
+            }
+
+            .payment-box {
+                background: #ffffff;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="page">
+
+    <div class="receipt">
+
+
+        <!-- GYM HEADER -->
+
+        <div class="gym-header">
+
+            {% if gym_settings.logo %}
+                <img
+                    src="{{ gym_settings.logo.url }}"
+                    alt="{{ gym_settings.gym_name }}"
+                    class="logo"
+                >
+            {% endif %}
+
+            <h1 class="gym-name">
+                {{ gym_settings.gym_name }}
+            </h1>
+
+            {% if gym_settings.tagline %}
+                <p class="tagline">
+                    {{ gym_settings.tagline }}
+                </p>
+            {% endif %}
+
+            <div class="gym-contact">
+
+                {% if gym_settings.address %}
+                    {{ gym_settings.address }}<br>
+                {% endif %}
+
+                {% if gym_settings.city %}
+                    {{ gym_settings.city }}
+                {% endif %}
+
+                {% if gym_settings.state %}
+                    , {{ gym_settings.state }}
+                {% endif %}
+
+                {% if gym_settings.pincode %}
+                    - {{ gym_settings.pincode }}
+                {% endif %}
+
+                {% if gym_settings.phone %}
+                    <br>
+                    Phone: {{ gym_settings.phone }}
+                {% endif %}
+
+                {% if gym_settings.email %}
+                    <br>
+                    {{ gym_settings.email }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- RECEIPT TITLE -->
+
+        <div class="receipt-title">
+
+            <h2>
+                PAYMENT RECEIPT
+            </h2>
+
+            <div class="receipt-number">
+                Receipt No: <strong>{{ payment.receipt_number }}</strong>
+            </div>
+
+        </div>
+
+
+        <!-- MEMBER DETAILS -->
+
+        <div class="section">
+
+            <h3 class="section-title">
+                Member Details
+            </h3>
+
+            <div class="details">
+
+                <div class="row">
+                    <span class="label">
+                        Member
+                    </span>
+
+                    <span class="value">
+                        {{ payment.membership.member.full_name }}
+                    </span>
+                </div>
+
+                <div class="row">
+                    <span class="label">
+                        Member ID
+                    </span>
+
+                    <span class="value">
+                        {{ payment.membership.member.member_id }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MEMBERSHIP DETAILS -->
+
+        <div class="section">
+
+            <h3 class="section-title">
+                Membership Details
+            </h3>
+
+            <div class="details">
+
+                <div class="row">
+                    <span class="label">
+                        Plan
+                    </span>
+
+                    <span class="value">
+                        {{ payment.membership.plan.name }}
+                    </span>
+                </div>
+
+                <div class="row">
+                    <span class="label">
+                        Membership Start
+                    </span>
+
+                    <span class="value">
+                        {{ payment.membership.start_date|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="row">
+                    <span class="label">
+                        Membership End
+                    </span>
+
+                    <span class="value">
+                        {{ payment.membership.end_date|date:"d M Y" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT DETAILS -->
+
+        <div class="section">
+
+            <h3 class="section-title">
+                Payment Details
+            </h3>
+
+            <div class="details">
+
+                <div class="row">
+                    <span class="label">
+                        Payment Date
+                    </span>
+
+                    <span class="value">
+                        {{ payment.payment_date|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="row">
+                    <span class="label">
+                        Payment Method
+                    </span>
+
+                    <span class="value">
+                        {{ payment.get_payment_method_display }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN AMOUNT -->
+
+        <div class="payment-box">
+
+            <div class="payment-label">
+                Amount Paid
+            </div>
+
+            <div class="payment-amount">
+                {{ gym_settings.currency_symbol }}{{ payment.amount|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT SUMMARY -->
+
+        <div class="summary">
+
+            <div class="row">
+
+                <span class="label">
+                    Membership Amount
+                </span>
+
+                <span class="value">
+                    {{ gym_settings.currency_symbol }}{{ membership.amount|floatformat:2 }}
+                </span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">
+                    Total Paid
+                </span>
+
+                <span class="value">
+                    {{ gym_settings.currency_symbol }}{{ total_paid|floatformat:2 }}
+                </span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">
+                    Balance Due
+                </span>
+
+                <span class="value balance">
+                    {{ gym_settings.currency_symbol }}{{ balance_due|floatformat:2 }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <p class="footer-message">
+                {{ gym_settings.receipt_footer }}
+            </p>
+
+            {% if gym_settings.website %}
+                <p class="footer-contact">
+                    {{ gym_settings.website }}
+                </p>
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <button
+                type="button"
+                class="button print-button"
+                onclick="window.print()"
+            >
+                Print Receipt
+            </button>
+
+            <a
+                href="{% url 'payments:list' %}"
+                class="button back-button"
+            >
+                Back to Payments
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

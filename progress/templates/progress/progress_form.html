@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if record %}
+        Edit Progress
+    {% else %}
+        Add Progress
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .form-page {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .page-heading {
+        margin-bottom: 24px;
+    }
+
+    .page-heading h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .page-heading p {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .form-section-title {
+        margin: 0 0 18px;
+        font-size: 17px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .form-section-subtitle {
+        margin: -10px 0 20px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        font-size: 13px;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #6366f1;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    .error {
+        color: #dc2626;
+        font-size: 11px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 9px;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .btn-primary {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    @media (max-width: 800px) {
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<div class="form-page">
+
+    <div class="page-heading">
+
+        <h1>
+            {% if record %}
+                Edit Progress Record
+            {% else %}
+                Add Progress Measurement
+            {% endif %}
+        </h1>
+
+        <p>
+            Record body measurements and fitness progress for a member.
+        </p>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <div class="form-card">
+
+            <h2 class="form-section-title">
+                Member & Date
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Member
+                    </label>
+
+                    {{ form.member }}
+
+                    {% if form.member.errors %}
+                        <div class="error">
+                            {{ form.member.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Measurement Date
+                    </label>
+
+                    {{ form.measurement_date }}
+
+                    {% if form.measurement_date.errors %}
+                        <div class="error">
+                            {{ form.measurement_date.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <h2 class="form-section-title">
+                Body Composition
+            </h2>
+
+            <p class="form-section-subtitle">
+                Weight in kilograms, height in centimetres, and body fat percentage.
+            </p>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Weight (kg)</label>
+
+                    {{ form.weight }}
+
+                    {% if form.weight.errors %}
+                        <div class="error">
+                            {{ form.weight.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Height (cm)</label>
+
+                    {{ form.height }}
+
+                    {% if form.height.errors %}
+                        <div class="error">
+                            {{ form.height.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Body Fat (%)</label>
+
+                    {{ form.body_fat }}
+
+                    {% if form.body_fat.errors %}
+                        <div class="error">
+                            {{ form.body_fat.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <h2 class="form-section-title">
+                Body Measurements
+            </h2>
+
+            <p class="form-section-subtitle">
+                All measurements are recorded in centimetres.
+            </p>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Chest</label>
+                    {{ form.chest }}
+                </div>
+
+                <div class="form-group">
+                    <label>Waist</label>
+                    {{ form.waist }}
+                </div>
+
+                <div class="form-group">
+                    <label>Hip</label>
+                    {{ form.hip }}
+                </div>
+
+                <div class="form-group">
+                    <label>Left Arm</label>
+                    {{ form.left_arm }}
+                </div>
+
+                <div class="form-group">
+                    <label>Right Arm</label>
+                    {{ form.right_arm }}
+                </div>
+
+                <div class="form-group">
+                    <label>Left Thigh</label>
+                    {{ form.left_thigh }}
+                </div>
+
+                <div class="form-group">
+                    <label>Right Thigh</label>
+                    {{ form.right_thigh }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <h2 class="form-section-title">
+                Trainer Notes
+            </h2>
+
+            <div class="form-group">
+
+                {{ form.trainer_notes }}
+
+                {% if form.trainer_notes.errors %}
+                    <div class="error">
+                        {{ form.trainer_notes.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            {% if form.non_field_errors %}
+
+                <div class="error">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'progress:list' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    {% if record %}
+                        Update Progress
+                    {% else %}
+                        Save Progress
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

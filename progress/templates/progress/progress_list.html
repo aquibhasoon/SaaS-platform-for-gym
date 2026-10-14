@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Tracking{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .progress-title {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .progress-subtitle {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .progress-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .progress-stat {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .progress-stat-label {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .progress-stat-value {
+        margin-top: 8px;
+        font-size: 27px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .progress-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .progress-card-header {
+        padding: 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .progress-card-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .progress-card-header p {
+        margin: 5px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .filter-form {
+        padding: 18px 20px;
+        display: grid;
+        grid-template-columns: 1fr 220px auto;
+        gap: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .filter-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .filter-input:focus {
+        border-color: #6366f1;
+    }
+
+    .progress-table-wrap {
+        overflow-x: auto;
+    }
+
+    .progress-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .progress-table th {
+        text-align: left;
+        padding: 13px 18px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .progress-table td {
+        padding: 15px 18px;
+        border-top: 1px solid #eef2f7;
+        font-size: 13px;
+        color: #334155;
+    }
+
+    .member-cell {
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .member-id {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .measurement-value {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 13px;
+        border-radius: 8px;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .btn-primary {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-danger {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .empty-state {
+        padding: 50px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    @media (max-width: 800px) {
+
+        .progress-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .progress-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+
+<div class="progress-header">
+
+    <div>
+        <h1 class="progress-title">
+            Progress Tracking
+        </h1>
+
+        <p class="progress-subtitle">
+            Track member body measurements and fitness progress.
+        </p>
+    </div>
+
+    {% if can_manage_progress %}
+        <a
+            href="{% url 'progress:create' %}"
+            class="btn btn-primary">
+
+            + Add Measurement
+
+        </a>
+    {% endif %}
+
+</div>
+
+
+<div class="progress-stats">
+
+    <div class="progress-stat">
+
+        <div class="progress-stat-label">
+            Records
+        </div>
+
+        <div class="progress-stat-value">
+            {{ total_records }}
+        </div>
+
+    </div>
+
+
+    <div class="progress-stat">
+
+        <div class="progress-stat-label">
+            Active Members
+        </div>
+
+        <div class="progress-stat-value">
+            {{ members|length }}
+        </div>
+
+    </div>
+
+
+    <div class="progress-stat">
+
+        <div class="progress-stat-label">
+            Tracking
+        </div>
+
+        <div class="progress-stat-value">
+            Body + Fitness
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="progress-card">
+
+    <div class="progress-card-header">
+
+        <div>
+            <h2>Progress Records</h2>
+
+            <p>
+                View and manage member measurements.
+            </p>
+        </div>
+
+    </div>
+
+
+    <form
+        method="get"
+        class="filter-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="filter-input"
+            placeholder="Search member name or ID...">
+
+
+        <select
+            name="member"
+            class="filter-input">
+
+            <option value="">
+                All Members
+            </option>
+
+            {% for member in members %}
+
+                <option
+                    value="{{ member.id }}"
+                    {% if member_id == member.id|stringformat:"s" %}
+                        selected
+                    {% endif %}>
+
+                    {{ member.full_name }}
+                    — {{ member.member_id }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <button
+            type="submit"
+            class="btn btn-secondary">
+
+            Filter
+
+        </button>
+
+    </form>
+
+
+    {% if records %}
+
+        <div class="progress-table-wrap">
+
+            <table class="progress-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Member</th>
+                        <th>Date</th>
+                        <th>Weight</th>
+                        <th>Body Fat</th>
+                        <th>Chest</th>
+                        <th>Waist</th>
+                        <th>Recorded By</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for record in records %}
+
+                        <tr>
+
+                            <td>
+
+                                <div class="member-cell">
+                                    {{ record.member.full_name }}
+                                </div>
+
+                                <span class="member-id">
+                                    {{ record.member.member_id }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                {{ record.measurement_date|date:"d M Y" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if record.weight %}
+                                    <span class="measurement-value">
+                                        {{ record.weight }} kg
+                                    </span>
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if record.body_fat %}
+                                    {{ record.body_fat }}%
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if record.chest %}
+                                    {{ record.chest }} cm
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if record.waist %}
+                                    {{ record.waist }} cm
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if record.recorded_by %}
+                                    {{ record.recorded_by.get_full_name|default:record.recorded_by.username }}
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="action-row">
+
+                                    <a
+                                        href="{% url 'progress:member_progress' record.member.id %}"
+                                        class="btn btn-secondary">
+
+                                        View
+
+                                    </a>
+
+                                    {% if can_manage_progress %}
+
+                                        <a
+                                            href="{% url 'progress:edit' record.id %}"
+                                            class="btn btn-secondary">
+
+                                            Edit
+
+                                        </a>
+
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'progress:delete' record.id %}"
+                                            onsubmit="return confirm('Delete this progress record?');">
+
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                No progress records found
+            </h3>
+
+            <p>
+                Add the first measurement to start tracking member progress.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

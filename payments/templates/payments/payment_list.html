@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Payments{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        color: #111827;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+    /* STATS */
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .stat-title {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 25px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+
+    /* FILTERS */
+
+    .filters {
+        background: white;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .filters form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .filters input,
+    .filters select {
+        padding: 11px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .search {
+        flex: 1;
+    }
+
+    .filters button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #111827;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .clear-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        color: #374151;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+
+    /* TABLE */
+
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    th,
+    td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    th {
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 600;
+        background: #f9fafb;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* MEMBER */
+
+    .member {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .member-id {
+        display: block;
+        margin-top: 3px;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+
+    /* PAYMENT METHOD */
+
+    .method {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: #f3f4f6;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    /* AMOUNT */
+
+    .amount {
+        font-weight: 700;
+        color: #047857;
+    }
+
+
+    /* VIEW */
+
+    .view-button {
+        display: inline-block;
+        padding: 7px 11px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        color: #374151;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .view-button:hover {
+        background: #f9fafb;
+    }
+
+
+    /* EMPTY */
+
+    .empty {
+        text-align: center;
+        padding: 50px;
+        color: #6b7280;
+    }
+
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1000px) {
+
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+        .page-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stats {
+            grid-template-columns: 1fr;
+        }
+
+        .filters form {
+            flex-direction: column;
+        }
+
+        .filters input,
+        .filters select,
+        .filters button,
+        .clear-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- HEADER -->
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Payments
+        </h1>
+
+        <p>
+            Track payments, collections and receipts.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="stats">
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Total Collected
+        </div>
+
+        <div class="stat-value">
+            ₹{{ total_collected|floatformat:2 }}
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Today's Collection
+        </div>
+
+        <div class="stat-value">
+            ₹{{ today_collected|floatformat:2 }}
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Total Payments
+        </div>
+
+        <div class="stat-value">
+            {{ payment_count }}
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            Pending Amount
+        </div>
+
+        <div class="stat-value">
+            ₹{{ pending_amount|floatformat:2 }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="filters">
+
+    <form method="get">
+
+        <input
+            type="text"
+            name="search"
+            class="search"
+            placeholder="Search member or receipt number..."
+            value="{{ search }}"
+        >
+
+
+        <select name="method">
+
+            <option value="">
+                All Payment Methods
+            </option>
+
+            <option
+                value="cash"
+                {% if method == "cash" %}selected{% endif %}
+            >
+                Cash
+            </option>
+
+            <option
+                value="upi"
+                {% if method == "upi" %}selected{% endif %}
+            >
+                UPI
+            </option>
+
+            <option
+                value="card"
+                {% if method == "card" %}selected{% endif %}
+            >
+                Card
+            </option>
+
+            <option
+                value="bank_transfer"
+                {% if method == "bank_transfer" %}selected{% endif %}
+            >
+                Bank Transfer
+            </option>
+
+            <option
+                value="other"
+                {% if method == "other" %}selected{% endif %}
+            >
+                Other
+            </option>
+
+        </select>
+
+
+        <button type="submit">
+            Search
+        </button>
+
+
+        {% if search or method %}
+
+            <a
+                href="{% url 'payments:list' %}"
+                class="clear-button"
+            >
+                Clear
+            </a>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<!-- PAYMENT TABLE -->
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Receipt
+                </th>
+
+                <th>
+                    Member
+                </th>
+
+                <th>
+                    Membership
+                </th>
+
+                <th>
+                    Amount
+                </th>
+
+                <th>
+                    Method
+                </th>
+
+                <th>
+                    Payment Date
+                </th>
+
+                <th>
+                    Action
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for payment in payments %}
+
+            <tr>
+
+
+                <td>
+
+                    <strong>
+                        {{ payment.receipt_number }}
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    <span class="member">
+                        {{ payment.membership.member.full_name }}
+                    </span>
+
+                    <span class="member-id">
+                        {{ payment.membership.member.member_id }}
+                    </span>
+
+                </td>
+
+
+                <td>
+                    {{ payment.membership.plan.name }}
+                </td>
+
+
+                <td class="amount">
+                    ₹{{ payment.amount|floatformat:2 }}
+                </td>
+
+
+                <td>
+
+                    <span class="method">
+                        {{ payment.get_payment_method_display }}
+                    </span>
+
+                </td>
+
+
+                <td>
+                    {{ payment.payment_date|date:"d M Y" }}
+                </td>
+
+
+                <td>
+
+                    <a
+                        href="{% url 'payments:detail' payment.id %}"
+                        class="view-button"
+                    >
+                        View Receipt
+                    </a>
+
+                </td>
+
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    No payments found.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% endblock %}

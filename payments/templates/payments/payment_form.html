@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Payment</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #374151;
+            text-decoration: none;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .summary {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .label {
+            color: #6b7280;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .error {
+            color: #b91c1c;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button,
+        .cancel {
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            background: #111827;
+            color: white;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button,
+            .cancel {
+                text-align: center;
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <a
+        href="{% url 'memberships:detail' membership.id %}"
+        class="back"
+    >
+        ← Back to Membership
+    </a>
+
+
+    <div class="card">
+
+        <h1>
+            Add Payment
+        </h1>
+
+
+        <div class="summary">
+
+            <div class="summary-row">
+
+                <span class="label">
+                    Member
+                </span>
+
+                <strong>
+                    {{ membership.member.full_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="label">
+                    Membership
+                </span>
+
+                <strong>
+                    {{ membership.plan.name }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="label">
+                    Total Amount
+                </span>
+
+                <strong>
+                    ₹{{ membership.amount }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="label">
+                    Already Paid
+                </span>
+
+                <strong>
+                    ₹{{ membership.total_paid }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span class="label">
+                    Pending
+                </span>
+
+                <strong>
+                    ₹{{ membership.balance_due }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% for field in form %}
+
+            <div class="field">
+
+                {{ field.label_tag }}
+
+                {{ field }}
+
+                {% for error in field.errors %}
+
+                <div class="error">
+                    {{ error }}
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endfor %}
+
+
+            <div class="buttons">
+
+                <button type="submit">
+                    Save Payment
+                </button>
+
+
+                <a
+                    href="{% url 'memberships:detail' membership.id %}"
+                    class="cancel"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

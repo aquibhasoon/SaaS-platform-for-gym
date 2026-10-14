@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Member | Gym Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #374151;
+            text-decoration: none;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 22px;
+            font-size: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .help {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .non-field-errors {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .save {
+            background: #111827;
+            color: white;
+        }
+
+        @media (max-width: 700px) {
+
+            .main {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<main class="main">
+
+    <a
+        href="{% url 'members:list' %}"
+        class="back"
+    >
+        ← Back to Members
+    </a>
+
+
+    <div class="header">
+
+        <h1>Add New Member</h1>
+
+        <p>
+            Enter the member's information below.
+        </p>
+
+    </div>
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="non-field-errors">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="card">
+
+            <h2>Personal Information</h2>
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.first_name.id_for_label }}">
+                        First Name *
+                    </label>
+
+                    {{ form.first_name }}
+
+                    {% for error in form.first_name.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.last_name.id_for_label }}">
+                        Last Name
+                    </label>
+
+                    {{ form.last_name }}
+
+                    {% for error in form.last_name.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.phone.id_for_label }}">
+                        Phone Number *
+                    </label>
+
+                    {{ form.phone }}
+
+                    {% for error in form.phone.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.email.id_for_label }}">
+                        Email Address
+                    </label>
+
+                    {{ form.email }}
+
+                    {% for error in form.email.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.date_of_birth.id_for_label }}">
+                        Date of Birth
+                    </label>
+
+                    {{ form.date_of_birth }}
+
+                    {% for error in form.date_of_birth.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.gender.id_for_label }}">
+                        Gender
+                    </label>
+
+                    {{ form.gender }}
+
+                    {% for error in form.gender.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="{{ form.address.id_for_label }}">
+                        Address
+                    </label>
+
+                    {{ form.address }}
+
+                    {% for error in form.address.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="{{ form.profile_photo.id_for_label }}">
+                        Profile Photo
+                    </label>
+
+                    {{ form.profile_photo }}
+
+                    <div class="help">
+                        Optional. JPG, PNG and other supported image formats.
+                    </div>
+
+                    {% for error in form.profile_photo.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.status.id_for_label }}">
+                        Status
+                    </label>
+
+                    {{ form.status }}
+
+                    {% for error in form.status.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Emergency Contact</h2>
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.emergency_contact_name.id_for_label }}">
+                        Contact Name
+                    </label>
+
+                    {{ form.emergency_contact_name }}
+
+                    {% for error in form.emergency_contact_name.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.emergency_contact_phone.id_for_label }}">
+                        Contact Phone
+                    </label>
+
+                    {{ form.emergency_contact_phone }}
+
+                    {% for error in form.emergency_contact_phone.errors %}
+                        <div class="error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                href="{% url 'members:list' %}"
+                class="btn cancel"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn save"
+            >
+                Save Member
+            </button>
+
+        </div>
+
+
+    </form>
+
+</main>
+
+</body>
+
+</html>
